@@ -258,12 +258,12 @@ function trial(items,cfg,rule,rng,offs){
   if(r){applyPlace(sh,r,cfg.kerf,p);sheets.push(sh)}else unplaced.push(p)}
  return{sheets,unplaced}}
 function evaluate(res,cfg){
- let newS=0,cuts=0,len=0,stock=0,largest=0;
- for(const s of res.sheets){if(s.src==='new')newS++;cuts+=s.nCuts;len+=s.cutLen;stock+=s.L*s.W;const ls=[];leaves(s.root,ls);for(const l of ls)largest=Math.max(largest,l.w*l.h)}
+ let newS=0,cuts=0,len=0,stock=0,largest=0,scrap=0;const thr=Math.max(cfg.minOff,10);
+ for(const s of res.sheets){if(s.src==='new')newS++;cuts+=s.nCuts;len+=s.cutLen;stock+=s.L*s.W;const ls=[];leaves(s.root,ls);for(const l of ls){largest=Math.max(largest,l.w*l.h);if(Math.min(l.w,l.h)<thr)scrap+=l.w*l.h}}
  const base=res.unplaced.length*1e13+newS*1e10;
- if(cfg.mode==='waste')return base+stock+cuts;
- if(cfg.mode==='easy')return base+cuts*4e5+len*20-largest*0.01;
- return base+cuts*3e4+len*10-largest*0.3}
+ if(cfg.mode==='waste')return base+scrap*20+stock*0.05+cuts*1e3;
+ if(cfg.mode==='easy')return base+cuts*4e5+len*20+scrap*0.5-largest*0.01;
+ return base+scrap*6+cuts*3e4+len*10-largest*0.02}
 function solve(cfg,items,offs,budget){
  const rng=mulberry(20260512);
  const keys=[p=>p.a*p.b,p=>Math.max(p.a,p.b),p=>Math.min(p.a,p.b),p=>p.a+p.b];
@@ -274,8 +274,8 @@ function solve(cfg,items,offs,budget){
   const rule=i<det?rules[Math.floor(i/keys.length)]:rules[Math.floor(rng()*rules.length)];
   const noise=i<det?0:0.1+rng()*0.5;
   const arr=items.map(p=>({p,k:key(p)*(1+noise*(rng()-.5)*2)})).sort((a,b)=>b.k-a.k).map(x=>x.p);
-  const res=trial(arr,cfg,rule,rng,offs),c=evaluate(res,cfg);
-  if(c<bc){bc=c;best=res}
+  for(const pool of (offs.length?[offs,[]]:[offs])){const res=trial(arr,cfg,rule,rng,pool),c=evaluate(res,cfg);
+   if(c<bc){bc=c;best=res}}
   if(i>=det&&Date.now()-t0>budget)break}
  return best}
 function finalize(res,cfg){
@@ -1063,7 +1063,7 @@ function start(){
  B().uid=user.uid;
  if(B().init)push();
  const err=e=>{if(e&&e.code==='permission-denied'){denied=true;status()}};
- const watch=(key,ref,fn)=>subs.push(FB.onSnapshot(ref,snap=>{denied=false;last[key]=snap;if(!snap.metadata.fromCache)srv[key]=1;pend[key]=!!snap.metadata.hasPendingWrites;try{fn(snap)}finally{status()}},err));
+ const watch=(key,ref,fn)=>subs.push(FB.onSnapshot(ref,{includeMetadataChanges:true},snap=>{denied=false;last[key]=snap;if(!snap.metadata.fromCache)srv[key]=1;pend[key]=!!snap.metadata.hasPendingWrites;try{const isCol=ref.type==='collection'||ref.isCol;if(!B().init||!isCol||!snap.docChanges||snap.docChanges().length>0)fn(snap)}finally{status()}},err));
  watch('off',FB.collection(db,'offcuts'),onOff);
  watch('ord',FB.collection(db,'orders'),onOrd);
  watch('cfg',FB.doc(db,'meta','cfg'),onCfg);
