@@ -623,7 +623,7 @@ function renderQuote(){
  if(!k.lines.length)h+='<p class="muted">Добавь детали в заявке — здесь появится расчёт.</p>';
  k.lines.forEach(l=>{const p=l.p,id=p.id;
   const draw=(p.segs&&p.segs.length?profSvg(p.segs,120,72,false):'')+(p.img?`<img src="${p.img}" alt="">`:'');
-  h+=`<div class="qline">${draw?`<div class="qd">${draw}</div>`:''}<div><b>${esc(p.name)}</b><br>${fl(p.a)} × ${fl(p.b)} ${ul}${p.segs&&p.segs.length?' (развёртка)':''} · ${p.qty} шт.<br><span class="muted">${esc(matLabel(pmat(p)))}</span><br>${m2(p.a*p.b*p.qty)} м² × ${l.ppm>0?money(l.ppm):'<i>цена не задана</i>'}/м²${l.mk>0?`<br>изготовление: ${money(l.mk)} × ${p.qty} шт.`:''}<div class="ovr noprint"><label>Изготовление 1 детали, ₽ (для этой позиции)</label><input type="number" inputmode="decimal" step="any" min="0" value="${p.mk||''}" placeholder="${q.make||'общая'}" onchange="setLineMk('${id}',this.value)"><label>Цена за м² для этой позиции</label><input type="number" inputmode="decimal" step="any" min="0" value="${p.ppm||''}" placeholder="${q.ppm||'общая'}" onchange="setLinePpm('${id}',this.value)"></div></div><div class="qs">${money(l.sum)}</div></div>`});
+  h+=`<div class="qline">${draw?`<div class="qd">${draw}</div>`:''}<div><b>${esc(p.name)}</b><br>${fl(p.a)} × ${fl(p.b)} ${ul}${p.segs&&p.segs.length?' (развёртка)':''} · ${p.qty} шт.<br><span class="muted">${esc(matLabel(pmat(p)))}</span><br>${m2(p.a*p.b*p.qty)} м² × ${l.ppm>0?money(l.ppm):'<i>цена не задана</i>'}/м²${l.mk>0?`<br>изготовление: ${money(l.mk)} × ${p.qty} шт.`:''}<br><b>Цена за 1 шт.: ${money(l.sum/Math.max(1,p.qty))}</b><div class="ovr noprint"><label>Изготовление 1 детали, ₽ (для этой позиции)</label><input type="number" inputmode="decimal" step="any" min="0" value="${p.mk||''}" placeholder="${q.make||'общая'}" onchange="setLineMk('${id}',this.value)"><label>Цена за м² для этой позиции</label><input type="number" inputmode="decimal" step="any" min="0" value="${p.ppm||''}" placeholder="${q.ppm||'общая'}" onchange="setLinePpm('${id}',this.value)"></div></div><div class="qs">${money(l.sum)}</div></div>`});
  h+=`<div class="qtot"><div><span>Позиции</span><span>${money(k.sub)}</span></div>`;
  if(k.disc)h+=`<div><span>Скидка ${q.disc}%</span><span>− ${money(k.disc)}</span></div>`;
  q.extras.forEach(e=>h+=`<div><span>${esc(e.name)}</span><span>${money(e.sum)}</span></div>`);
@@ -646,7 +646,7 @@ function renderQuote(){
 function quoteText(){
  const k=quoteCalc(),q=S.q,ul=UL[S.cfg.unit];
  let t=`Ценник № ${curNo()} от ${today()}\n`;if(S.order.client)t+=`Заказчик: ${S.order.client}\n`;t+='\n';
- k.lines.forEach((l,i)=>t+=`${i+1}. ${l.p.name} — ${fl(l.p.a)}×${fl(l.p.b)} ${ul}, ${l.p.qty} шт., ${matLabel(pmat(l.p))}, ${fm2(l.area)} м² × ${money(l.ppm)}${l.mk>0?` + изготовление ${money(l.mk)}×${l.p.qty}`:''} = ${money(l.sum)}\n`);
+ k.lines.forEach((l,i)=>t+=`${i+1}. ${l.p.name} — ${fl(l.p.a)}×${fl(l.p.b)} ${ul}, ${l.p.qty} шт., ${matLabel(pmat(l.p))}, ${fm2(l.area)} м² × ${money(l.ppm)}${l.mk>0?` + изготовление ${money(l.mk)}×${l.p.qty}`:''} = ${money(l.sum)} (${money(l.sum/Math.max(1,l.p.qty))}/шт.)\n`);
  if(k.disc)t+=`Скидка ${q.disc}%: −${money(k.disc)}\n`;q.extras.forEach(e=>t+=`${e.name}: ${money(e.sum)}\n`);
  if(k.vat)t+=`НДС ${q.vat}%: ${money(k.vat)}\n`;t+=`\nК оплате: ${money(k.total)}`;return t}
 function copyQuote(){const t=quoteText();
