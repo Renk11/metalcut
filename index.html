@@ -640,9 +640,13 @@ function renderQuote(){
   const profit=k.net-costT;
   costG.forEach(x=>{ih+=`<div class="orow"><span>${esc(matLabel(x.g.mat))}<br><span class="muted">${x.nNew?x.nNew+' нов. лист. × '+(x.g.price>0?money(x.g.price):'цена не задана'):''}${x.nNew&&x.nOff?' + ':''}${x.nOff?x.nOff+' ост. со склада':''} · израсходовано ${fm2(x.used)} м²${x.ret>0?' · на склад вернётся '+fm2(x.ret)+' м² ('+money(x.retC)+')':''}</span></span><b>${money(x.cost)}</b></div>`});
   if(costG.some(x=>x.cost<=0))ih+='<div class="muted">Для части материалов нет цены листа (или себестоимости остатка) — она не учтена.</div>';
-  ih+=`<div class="orow"><span>Металл израсходовано (детали + отход)</span><b>${money(costT)}</b></div><div class="orow"><span>Выручка без НДС</span><b>${money(k.net)}</b></div><div class="orow"><span>Маржа (до работы и расходов)</span><b class="${profit>=0?'ok':'bad'}">${money(profit)}${k.net>0?' · '+Math.round(profit/k.net*100)+'%':''}</b></div><div class="muted">Остаток считается по цене м² листа, из которого он получен; полезные остатки возвращаются на склад с этой себестоимостью и в расход не входят.</div>`}
+  ih+=`<div class="orow"><span>Металл израсходовано (детали + отход)</span><b>${money(costT)}</b></div><div class="orow"><span>Выручка без НДС</span><b>${money(k.net)}</b></div><div class="orow"><span>Маржа по металлу</span><b class="${profit>=0?'ok':'bad'}">${money(profit)}${k.net>0?' · '+Math.round(profit/k.net*100)+'%':''}</b></div><div class="muted">Остаток считается по цене м² листа, из которого он получен; полезные остатки возвращаются на склад с этой себестоимостью и в расход не входят.</div>`}
  else ih+='<p class="muted">Укажи цену листа в материале детали (или себестоимость остатка на складе) и получи раскрой — здесь появятся себестоимость металла и маржа.</p>';
+ const wp=S.q.wage>0?S.q.wage:0,mk=k.lines.reduce((a,l)=>a+l.mk*l.p.qty,0),wage=mk*wp/100;
+ ih+=`<div class="orow"><span>ЗП работника, %<br><span class="muted">от цены за изготовление: ${money(mk)}</span></span><input type="number" inputmode="decimal" step="any" min="0" max="100" value="${wp||''}" placeholder="0" style="width:100px;min-height:40px" onchange="setWage(this.value)"></div>`;
+ if(wp>0){const rest=k.net-costT-wage;ih+=`<div class="orow"><span>ЗП работника (${wp}% от ${money(mk)})</span><b>${money(wage)}</b></div><div class="orow"><span>Остаётся после металла и ЗП</span><b class="${rest>=0?'ok':'bad'}">${money(rest)}${k.net>0?' · '+Math.round(rest/k.net*100)+'%':''}</b></div>`}
  $('qInternal').innerHTML=ih}
+function setWage(v){const x=num(v);S.q.wage=x>0?Math.min(100,x):0;save();renderQuote()}
 function quoteText(){
  const k=quoteCalc(),q=S.q,ul=UL[S.cfg.unit];
  let t=`Ценник № ${curNo()} от ${today()}\n`;if(S.order.client)t+=`Заказчик: ${S.order.client}\n`;t+='\n';
