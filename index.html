@@ -41,6 +41,30 @@ details.prof>summary::-webkit-details-marker{display:none}details.prof>summary::
 .imgrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px}.thumb{height:64px;border-radius:6px;border:1px solid #cbd3dc}
 .filebtn{position:relative;display:inline-flex;align-items:center;gap:6px;background:#e9edf1;color:#273443;border-radius:10px;padding:10px 14px;font-weight:700;font-size:14px;cursor:pointer;margin:0}
 .filebtn input{position:absolute;opacity:0;width:1px;height:1px}
+.stbig{background:#fff1e6;border-left:5px solid #f07824;border-radius:8px;padding:12px 14px;margin:8px 0}.sttxt{font-size:22px;font-weight:800;line-height:1.35;margin-top:4px}
+.stbtn{display:grid;grid-template-columns:1fr 2fr;gap:10px;position:sticky;bottom:0;padding:10px 0;background:inherit}.stbtn button{min-height:64px;font-size:19px}.stepv{z-index:70}
+.lblgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.lbl{border:1.5px dashed #555;border-radius:6px;padding:8px 10px;break-inside:avoid;font-size:13px;line-height:1.4}.lbl .ls{font-size:17px;font-weight:800;white-space:nowrap}.lbl .ln{font-style:italic;margin-top:2px}.lbl svg{max-width:100%}
+.pnote{margin-top:6px}
+.lt{width:100%;border-collapse:collapse;font-size:11px;margin-top:2px}.lt td{white-space:nowrap;padding:1px 3px;border-top:1px solid #ccd3da}.lblgrid.one{grid-template-columns:1fr;max-width:420px}.lt.big{font-size:13px}.lt.big th{text-align:left;font-size:11px;color:#5b6672;padding:2px 3px}.lt.big td.mt{white-space:normal;font-size:11px}
+.lt tr.cur td{font-weight:800;background:#fff1e6;color:#18212b}
+@media screen{
+html[data-theme=dark]{color-scheme:dark}
+html[data-theme=dark],html[data-theme=dark] body{background:#10151b;color:#e3e8ee}
+html[data-theme=dark] .panel,html[data-theme=dark] .menu,html[data-theme=dark] .pv,html[data-theme=dark] .pvbar,html[data-theme=dark] .ed,html[data-theme=dark] .edh,html[data-theme=dark] .rb,html[data-theme=dark] .tx{background:#1a222b;border-color:#2c3844;color:#e3e8ee}
+html[data-theme=dark] .pcard,html[data-theme=dark] .segc,html[data-theme=dark] .edb{background:#161d25;border-color:#2c3844}
+html[data-theme=dark] input,html[data-theme=dark] select{background:#10161c;border-color:#35424f;color:#e3e8ee}
+html[data-theme=dark] input:disabled{background:#1a222b;color:#8a97a4}
+html[data-theme=dark] label,html[data-theme=dark] .muted,html[data-theme=dark] .chk,html[data-theme=dark] .area,html[data-theme=dark] .sn,html[data-theme=dark] .metric span,html[data-theme=dark] .metric small,html[data-theme=dark] details.mat>summary,html[data-theme=dark] details.prof>summary,html[data-theme=dark] details.adv summary,html[data-theme=dark] .menu button{color:#a9b5c1}
+html[data-theme=dark] .metric,html[data-theme=dark] .step,html[data-theme=dark] .tot,html[data-theme=dark] .bt th{background:#1d2630}
+html[data-theme=dark] button.secondary,html[data-theme=dark] .filebtn{background:#28333f;color:#dbe2e9}
+html[data-theme=dark] button.danger{background:#3a2220;color:#ff9a90}
+html[data-theme=dark] .menu button.on,html[data-theme=dark] .rb.on,html[data-theme=dark] .tx.on,html[data-theme=dark] .stbig{background:#3a2a1c;color:#ffb27a}
+html[data-theme=dark] .warn{background:#2f2713}html[data-theme=dark] .err{background:#35191a}html[data-theme=dark] .toast{background:#17301f}
+html[data-theme=dark] .bad{color:#ff8a80}html[data-theme=dark] .ok{color:#6fd39a}html[data-theme=dark] .orow{border-color:#2c3844}
+html[data-theme=dark] .lbl{border-color:#8896a4}
+html.big body{zoom:1.18}html.big button{min-height:52px}html.big input,html.big select{min-height:52px}
+}
+.arow2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
 .orow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #edf0f3;font-size:14px;line-height:1.45}
 details.adv{margin-top:6px}details.adv summary{font-size:13px;color:#445260;font-weight:600;cursor:pointer;min-height:32px}
 textarea{width:100%;min-height:90px;border:1px solid #cbd3dc;border-radius:8px;padding:9px;font:16px/1.4 monospace}
@@ -89,16 +113,17 @@ textarea{width:100%;min-height:90px;border:1px solid #cbd3dc;border-radius:8px;p
 <div class="left"><div class="brand">Metal<span>Cut</span></div>
 <div class="menuwrap"><button id="menuBtn" class="menubtn" aria-haspopup="true">☰ <span id="menuLbl">Заявка</span> ▾</button>
 <div id="menu" class="menu" hidden>
-<button data-v="order">📋 Заявка и детали</button><button data-v="result">✂ Раскрой</button><button data-v="quote">💰 Цена клиенту</button><button data-v="stock">📦 Склад остатков</button><button data-v="archive">🗂 Архив заявок</button><button data-v="settings">⚙ Настройки</button>
+<button data-v="order">📋 Заявка и детали</button><button data-v="result">✂ Раскрой</button><button data-v="quote">💰 Цена клиенту</button><button data-v="stock">📦 Склад остатков</button><button data-v="archive">🗂 Архив заявок</button><button data-v="clients">👥 Клиенты и долги</button><button data-v="report">📊 Отчёт за месяц</button><button data-v="settings">⚙ Настройки</button>
 </div></div></div>
 <button id="syncBtn" class="menubtn" style="min-height:40px;padding:6px 10px;font-size:13px" aria-label="Синхронизация">☁</button><div class="un"><span>Ед.</span><select id="unit"><option value="mm">мм</option><option value="cm">см</option><option value="m">м</option></select></div>
 </header>
+<div id="warnBar" class="warn err noprint" hidden style="margin:8px"></div>
 <main>
 
 <section class="view" id="v-order">
 <div class="noprint">
 <div class="panel"><h2>Заявка</h2>
-<div class="grid"><div><label>Заказчик</label><input id="ordClient" placeholder="Имя или компания"></div><div><label>№ заявки (авто)</label><input id="ordNo" disabled></div><div style="grid-column:1/-1"><label>Комментарий</label><input id="ordNote" placeholder="Например, срок, адрес"></div></div></div>
+<div class="grid"><div><label>Заказчик</label><input id="ordClient" list="cliList" autocomplete="off" placeholder="Имя или компания"><datalist id="cliList"></datalist></div><div><label>№ заявки (авто)</label><input id="ordNo" disabled></div><div><label>Телефон</label><input id="ordPhone" type="tel" placeholder="+7…"></div><div><label>Адрес</label><input id="ordAddr" placeholder="Адрес объекта"></div><div><label>Предоплата, ₽</label><input id="ordPrepay" type="number" inputmode="decimal" min="0" step="any" placeholder="0"></div><div style="grid-column:1/-1"><label>Комментарий</label><input id="ordNote" placeholder="Например, срок, адрес"></div></div></div>
 <div class="panel" style="margin-top:12px"><h2>Детали</h2>
 <div style="margin-bottom:8px"><label>Название (необязательно)</label><input id="partName" placeholder="Например, отлив"></div>
 <div class="addrow"><div><label>A длина, <span class="ul"></span></label><input id="partA" type="number" inputmode="decimal" step="any"></div><div><label>B ширина, <span class="ul"></span></label><input id="partB" type="number" inputmode="decimal" step="any"></div><div><label>Кол-во</label><input id="partQty" type="number" inputmode="numeric" value="1" min="1"></div></div>
@@ -110,7 +135,7 @@ textarea{width:100%;min-height:90px;border:1px solid #cbd3dc;border-radius:8px;p
 <div class="actions"><button class="secondary" id="bulkAdd">Добавить из списка</button></div></details>
 <div id="parts"></div>
 </div>
-<div class="actions"><button class="secondary" id="printOrder">Печать заявки (с рисунками)</button></div>
+<div class="actions"><button class="secondary" id="printOrder">Печать заявки (с рисунками)</button><button class="secondary" id="printLabels">🏷 Наклейки на детали</button></div>
 </div>
 <div class="printonly" id="specPrint"></div>
 </section>
@@ -118,7 +143,7 @@ textarea{width:100%;min-height:90px;border:1px solid #cbd3dc;border-radius:8px;p
 <section class="view" id="v-result" hidden>
 <div class="panel">
 <div class="printonly" id="printhead"></div>
-<div class="actions noprint" style="margin-top:0"><button id="calc">Пересчитать глубже</button><button class="secondary" id="zoomBtn">Крупная схема</button><button class="secondary" id="print">Печать карты</button><button class="secondary" id="done">Работа выполнена → склад</button></div>
+<div class="actions noprint" style="margin-top:0"><button id="calc">Пересчитать глубже</button><button class="secondary" id="zoomBtn">Крупная схема</button><button class="secondary" id="print">Печать карты</button><button id="stepBtn">▶ Резать по шагам</button><button class="secondary" id="done">Работа выполнена → склад</button></div>
 <div id="stockNote" class="noprint" style="margin-top:10px"></div>
 <div id="result" style="margin-top:12px"><p class="muted">Добавь детали — расчёт запустится автоматически.</p></div>
 </div>
@@ -146,10 +171,19 @@ textarea{width:100%;min-height:90px;border:1px solid #cbd3dc;border-radius:8px;p
 <div class="addrow" style="grid-template-columns:1fr"><div><label>Стоимость, ₽ за м² (необяз.)</label><input id="oP" type="number" inputmode="decimal" step="any" min="0"></div></div>
 <div class="actions" style="margin-top:0"><button class="secondary" id="oAdd">Добавить остаток</button></div>
 <div id="offs"></div></div>
+<div class="panel" style="margin-top:12px"><h2>Запас материала и закупка</h2><p class="muted">Задай минимальный запас по материалу (м²). Когда остатков станет меньше — появится подсказка «докупить».</p><div id="stockLvl"></div></div>
 </section>
 
 <section class="view" id="v-archive" hidden>
-<div class="panel"><h2>Архив заявок</h2><p class="muted">Заявки попадают сюда после «Работа выполнена». Можно открыть заявку снова, чтобы повторить или распечатать ценник.</p><div id="archive"></div></div>
+<div class="panel"><h2>Архив заявок</h2><p class="muted">Заявки попадают сюда после «Работа выполнена». Можно открыть заявку снова, чтобы повторить или распечатать ценник.</p><div class="grid" style="margin:8px 0"><div><label>Поиск</label><input id="archQ" type="search" placeholder="клиент, №, деталь, дата" oninput="renderArchive()"></div><div><label>Показать</label><select id="archSt" onchange="renderArchive()"><option value="">Все</option><option value="draft">В работе</option><option value="ready">Готово (не выдано)</option><option value="issued">Выдано</option><option value="debt">С долгом</option></select></div></div><div id="archive"></div></div>
+</section>
+
+<section class="view" id="v-clients" hidden>
+<div class="panel"><h2>Клиенты и долги</h2><input id="cliQ" type="search" placeholder="Поиск клиента" oninput="renderClients()" style="margin-bottom:8px"><div id="clients"></div></div>
+</section>
+
+<section class="view" id="v-report" hidden>
+<div class="panel"><h2>Отчёт за месяц</h2><label>Месяц</label><input id="repMonth" type="month" onchange="renderReport()" style="margin-bottom:10px"><div id="report"></div></div>
 </section>
 
 <section class="view" id="v-settings" hidden>
@@ -159,6 +193,8 @@ textarea{width:100%;min-height:90px;border:1px solid #cbd3dc;border-radius:8px;p
 <div><label>Режим раскроя</label><select class="cfg" id="mode"><option value="balanced">Сбалансированный</option><option value="waste">Минимум отходов</option><option value="easy">Меньше резов</option></select></div>
 <div><label>Поворот деталей на 90°</label><select class="cfg" id="rotate"><option value="no">Запрещён</option><option value="yes">Разрешён</option></select></div>
 </div></div>
+<div class="panel"><h2>Вид и листы</h2><div class="grid"><div><label>Тема (на этом устройстве)</label><select id="uiTheme" onchange="uiSet()"><option value="light">Светлая</option><option value="dark">Тёмная</option><option value="auto">Как в системе</option></select></div><div><label>Размер интерфейса</label><select id="uiBig" onchange="uiSet()"><option value="0">Обычный</option><option value="1">Крупный</option></select></div><div style="grid-column:1/-1"><label>Другие размеры листа — выбрать лучший (необяз.)</label><input id="altSz" placeholder="например: 3000x1250; 2000x1000" onchange="altSet(this.value)"><div class="muted">Для деталей без своего размера листа приложение сравнит эти размеры с основным и возьмёт тот, где меньше расход металла.</div></div></div></div>
+<div class="panel" style="margin-top:12px"><h2>Резервная копия</h2><p class="muted">Файл со всеми остатками, заявками и настройками. Сохрани его себе на случай потери телефона.</p><div class="actions" style="margin-top:0"><button class="secondary" onclick="backupSave()">⬇ Скачать копию</button><button class="secondary" onclick="backupShare()">↗ Поделиться</button><button class="secondary" onclick="$('bkFile').click()">⬆ Восстановить</button></div><input id="bkFile" type="file" accept=".json,application/json" hidden onchange="backupLoad(this.files[0]);this.value=''"></div>
 <details class="panel"><summary style="display:block"><b>Дополнительно</b><br><span class="muted">нож, рез, листы по умолчанию, свои цвета и текстуры</span></summary>
 <div class="grid">
 <div><label>Длина листа, <span class="ul"></span></label><input class="cfg" id="sheetL" type="number" inputmode="decimal" min="0" step="any"></div>
@@ -180,6 +216,7 @@ textarea{width:100%;min-height:90px;border:1px solid #cbd3dc;border-radius:8px;p
 </details>
 </section>
 </main>
+<div id="stepv" class="pv stepv" hidden><div class="pvbar"><b id="stTitle"></b><button class="secondary sm" onclick="stepClose()">✕ Закрыть</button></div><div id="stBody" style="padding:12px;max-width:940px;margin:0 auto"></div></div>
 <div id="pv" class="pv" hidden>
 <div class="pvbar noprint"><b id="pvTitle">Печать</b><div class="pvb"><button class="sm" id="pvPrint">🖨 Печать</button><button class="secondary sm" id="pvSave">⬇ Скачать</button><button class="secondary sm" id="pvShare">Поделиться</button><button class="secondary sm" id="pvClose">Закрыть</button></div></div>
 <p class="muted noprint">Если «Печать» не срабатывает в этом окне, нажмите «Скачать» — файл откроется в браузере, оттуда можно печатать или сохранить в PDF. Или «Поделиться» (отправить в мессенджер).</p>
@@ -328,7 +365,7 @@ const curNo=()=>String(Math.max(S.counter||0,histMax())+1);
 const okey=o=>[Math.round(o.L),Math.round(o.W),normRal(o.ral),normTex(o.tex),Math.round((o.thick||0)*100)].join('_').replace(/[\/\s.#$\[\]]/g,'~');
 function migOff(){const m={};(S.offcuts||[]).forEach(o=>{if(!(o.qty>0))return;o.id=okey(o);if(m[o.id]){m[o.id].qty+=o.qty;if(!(m[o.id].ppm>0))m[o.id].ppm=o.ppm||0}else m[o.id]=o});S.offcuts=Object.values(m)}
 let uid=0;const nid=()=>'i'+Date.now().toString(36)+(++uid)+Math.random().toString(36).slice(2,6);
-let S={cfg:{unit:'mm',L:2500,W:1250,C:2500,kerf:2,trim:0,minOff:150,thick:1,bend:0,sheetPrice:0,ral:'',tex:'',mode:'balanced',rot:false},parts:[],offcuts:[],order:{client:'',no:'',note:''},q:{ppm:0,disc:0,vat:0,extras:[]},history:[],colors:[],texs:[],tpls:[],drafts:[],draftId:null,tomb:[],counter:0,base:null};
+let S={cfg:{unit:'mm',L:2500,W:1250,C:2500,kerf:2,trim:0,minOff:150,thick:1,bend:0,sheetPrice:0,ral:'',tex:'',mode:'balanced',rot:false},parts:[],offcuts:[],order:{client:'',no:'',note:''},q:{ppm:0,disc:0,vat:0,extras:[]},history:[],colors:[],texs:[],tpls:[],minStock:{},drafts:[],draftId:null,tomb:[],counter:0,base:null};
 let undoHid=null,result=null,curUnit='mm',zoom=false,lastW=0,undoSnap=null,cur='order',saveWarned=false;
 const openProf=new Set();
 const f=()=>UF[S.cfg.unit];
@@ -341,7 +378,7 @@ const getP=id=>S.parts.find(x=>x.id===id);
 
 function saveRaw(){try{localStorage.setItem(KEY,JSON.stringify(S.base&&S.base.init?Object.assign({},S,{history:[],drafts:[]}):S))}catch(e){if(!saveWarned){saveWarned=true;alert('Не удалось сохранить: память браузера заполнена. Удалите рисунки или старые заявки из архива.')}}}
 function save(){saveRaw();if(window.SyncHook)SyncHook.dirty()}
-function load(){try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j&&j.cfg){S.cfg=Object.assign(S.cfg,j.cfg);S.parts=j.parts||[];S.offcuts=j.offcuts||[];S.order=Object.assign(S.order,j.order||{});S.q=Object.assign(S.q,j.q||{});S.history=j.history||[];S.colors=j.colors||[];S.texs=j.texs||[];S.tpls=j.tpls||[];S.draftId=j.draftId||null;S.tomb=j.tomb||[];S.counter=j.counter||j.seq||0;S.base=j.base||null}}catch(e){}
+function load(){try{const j=JSON.parse(localStorage.getItem(KEY)||'null');if(j&&j.cfg){S.cfg=Object.assign(S.cfg,j.cfg);S.parts=j.parts||[];S.offcuts=j.offcuts||[];S.order=Object.assign(S.order,j.order||{});S.q=Object.assign(S.q,j.q||{});S.history=j.history||[];S.colors=j.colors||[];S.texs=j.texs||[];S.tpls=j.tpls||[];S.minStock=j.minStock||{};S.draftId=j.draftId||null;S.tomb=j.tomb||[];S.counter=j.counter||j.seq||0;S.base=j.base||null}}catch(e){}
  migOff();
  if(!Array.isArray(S.q.extras))S.q.extras=[];
  if(!UF[S.cfg.unit])S.cfg.unit='mm';curUnit=S.cfg.unit;
@@ -352,10 +389,10 @@ const RAW_IDS=[['thick','thick'],['bend','bend'],['sheetPrice','sheetPrice']];
 function syncCfg(){const c=S.cfg;LEN_IDS.forEach(([k,id])=>$(id).value=inV(c[k]));RAW_IDS.forEach(([k,id])=>$(id).value=c[k]);$('ral').value=c.ral||'';$('tex').value=c.tex||'';
  $('mode').value=c.mode;$('rotate').value=c.rot?'yes':'no';$('unit').value=c.unit;setLabels()}
 function syncQ(){$('qPpm').value=S.q.ppm||'';$('qMake').value=S.q.make||'';$('qDisc').value=S.q.disc||'';$('qVat').value=S.q.vat||''}
-function syncOrder(){$('ordClient').value=S.order.client||'';$('ordNo').value=curNo();$('ordNote').value=S.order.note||''}
+function syncOrder(){$('ordClient').value=S.order.client||'';$('ordNo').value=curNo();$('ordNote').value=S.order.note||'';$('ordPhone').value=S.order.phone||'';$('ordAddr').value=S.order.addr||'';$('ordPrepay').value=S.order.prepay||'';renderClients0()}
 function readCfg(){const c={unit:curUnit},fx=UF[curUnit];
  LEN_IDS.forEach(([k,id])=>c[k]=num($(id).value)*fx);RAW_IDS.forEach(([k,id])=>c[k]=num($(id).value));
- c.bend=c.bend||0;c.sheetPrice=c.sheetPrice||0;c.minOff=c.minOff||0;c.ral=$('ral').value.trim();c.tex=$('tex').value.trim();c.mode=$('mode').value;c.rot=$('rotate').value==='yes';return c}
+ c.bend=c.bend||0;c.sheetPrice=c.sheetPrice||0;c.minOff=c.minOff||0;c.ral=$('ral').value.trim();c.tex=$('tex').value.trim();c.mode=$('mode').value;c.rot=$('rotate').value==='yes';c.alt=S.cfg.alt||[];return c}
 function validate(c){
  if(!(c.L>0&&c.W>0))return'Проверь размеры листа.';
  if(!(c.C>0))return'Укажи длину ножа.';
@@ -417,6 +454,7 @@ function upd(id,k,v){
  const p=getP(id);if(!p)return;
  if(k==='name')p.name=String(v).trim()||p.name;
  else if(k==='rot')p.rot=!!v;
+ else if(k==='note'){p.note=String(v).trim();save();return}
  else{const x=num(v);if(!(x>0)){renderParts();return}p[k]=k==='qty'?Math.round(x):Math.round(x*f()*1e4)/1e4}
  changed()}
 function delPart(id){S.parts=S.parts.filter(p=>p.id!==id);changed()}
@@ -483,11 +521,15 @@ function renderParts(){
   <div class="prow2"><div><label>A длина, ${ul}</label><input type="number" inputmode="decimal" step="any" min="0" value="${inV(p.a)}" onchange="upd('${id}','a',this.value)"></div><div><label>B ${hp?'развёртка':'ширина'}, ${ul}</label><input type="number" inputmode="decimal" step="any" min="0" value="${inV(p.b)}" ${hp?'disabled':''} onchange="upd('${id}','b',this.value)"></div><div><label>Кол-во</label><input type="number" inputmode="numeric" min="1" value="${p.qty}" onchange="upd('${id}','qty',this.value)"></div></div>
   <div class="prow3"><label class="chk"><input type="checkbox" ${p.rot?'checked':''} onchange="upd('${id}','rot',this.checked)">можно поворачивать ↻</label><span class="area">${m2(p.a*p.b*p.qty)} м²</span></div>
   ${matBlock(p)}
+  <input class="pnote" placeholder="Заметка к детали (для гибщика, попадёт на наклейку)" value="${esc(p.note||'')}" onchange="upd('${id}','note',this.value)">
   <details class="prof" ${openProf.has(id)?'open':''} ontoggle="this.open?openProf.add('${id}'):openProf.delete('${id}')"><summary>Развёртка и профиль${hp?' · '+fu(p.b):''}${p.img?' · 📷':''}</summary>${profEditor(p)}</details></div>`}).join('');
  $('parts').innerHTML=`<div class="plist">${cards}</div><div class="tot"><b>Итого: ${m2(ar)} м²</b><br>${n} дет. · масса ≈ ${fm1(kg)} кг</div>`}
 
 /* склад */
+function renderClients0(){const dl=$('cliList');if(dl)dl.innerHTML=clientsAgg().map(c=>`<option value="${esc(c.name)}">`).join('')}
 function renderOffs(){
+ try{renderStockLvl()}catch(e){}
+
  setLabels();
  if(!S.offcuts.length){$('offs').innerHTML='<p class="muted">Остатков нет.</p>';return}
  $('offs').innerHTML=S.offcuts.map(o=>`<div class="orow"><span>${fl(o.L)} × ${fl(o.W)} ${UL[S.cfg.unit]} · ${esc(coatLabel(o.ral,o.tex))}${ralSw(o.ral)} · ${o.thick} мм · ${o.qty} шт. · ${m2(o.L*o.W*o.qty)} м²${o.ppm>0?' · '+money(o.ppm)+'/м²':''}</span><button class="danger" onclick="delOff('${o.id}')" aria-label="Удалить">×</button></div>`).join('')}
@@ -529,7 +571,15 @@ function recalc(budget){
    for(let i=0;i<p.qty;i++)items.push({gid:p.id,name:p.name,a:p.a,b:p.b,rot:rt})});
   total+=items.length;
   const offs=[];okOffs.forEach(o=>{for(let i=0;i<o.qty;i++)offs.push({L:o.L,W:o.W,eid:o.id})});
-  const r=items.length?finalize(solve(gc,items,offs,bud),gc):{sheets:[],unplaced:[]};
+  let r=items.length?finalize(solve(gc,items,offs,bud),gc):{sheets:[],unplaced:[]};
+  if(items.length&&(c.alt||[]).length&&!g.parts.some(p=>p.L>0||p.W>0)&&r.sheets.some(s=>s.src==='new')){
+   const ppm0=g.price>0?g.price/(g.mat.L*g.mat.W/1e6):1;
+   const scr=rr=>rr.sheets.reduce((a,s)=>a+(s.src==='new'?(s.L*s.W-.5*s.usableArea)/1e6*ppm0:0),0);
+   let bs=scr(r),bsz=null;
+   c.alt.forEach(([L2,W2])=>{if(L2===g.mat.L&&W2===g.mat.W)return;const gc2=Object.assign({},c,{L:L2,W:W2}),ux2=L2-2*c.trim,uy2=W2-2*c.trim;
+    if(!items.every(it=>(it.a<=ux2&&it.b<=uy2)||(it.rot&&it.b<=ux2&&it.a<=uy2)))return;
+    const r2=finalize(solve(gc2,items,offs,bud),gc2),s2=scr(r2);if(s2<bs-1e-6){bs=s2;r=r2;bsz=[L2,W2]}});
+   if(bsz){g.mat=Object.assign({},g.mat,{L:bsz[0],W:bsz[1]});if(g.price>0)g.price=ppm0*bsz[0]*bsz[1]/1e6;g.altPick=1}}
   r.sheets.forEach(sh=>{sh.mat=g.mat;sh.price=g.price;sheets.push(sh)});r.unplaced.forEach(u=>unplaced.push(u))});
  const skipped=S.offcuts.filter(o=>!groups.some(g=>offMatch(o,g.mat))).reduce((a,o)=>a+o.qty,0);
  result={cfg:c,res:{sheets,unplaced},invalid,total,skipped,groups,dirT:groups.some(g=>g.dirT)};render();renderQuote()}
@@ -556,7 +606,7 @@ function svgSheet(s,idx,avail){
  s.cutNodes.forEach(n=>{const k=n.cut.k;let x1,y1,x2,y2,bx,by;
   if(n.cut.dir==='h'){const y=n.y+n.cut.off+k/2;x1=X(n.x);x2=X(n.x+n.w);y1=y2=Y(y);bx=x1+11;by=y1}
   else{const x=n.x+n.cut.off+k/2;y1=Y(n.y);y2=Y(n.y+n.h);x1=x2=X(x);bx=x1;by=y1+11}
-  o+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#d93025" stroke-width="1.3" stroke-dasharray="6 3"/><circle cx="${bx}" cy="${by}" r="8" fill="#d93025"/><text x="${bx}" y="${by}" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="700" fill="#fff">${n.cut.no}</text>`});
+  o+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#d93025" stroke-width="${n.cut.no===window.hiCut?4:1.3}" opacity="${window.hiCut>0&&n.cut.no<window.hiCut?.3:1}" stroke-dasharray="6 3"/><circle cx="${bx}" cy="${by}" r="${n.cut.no===window.hiCut?12:8}" fill="#d93025"/><text x="${bx}" y="${by}" text-anchor="middle" dominant-baseline="central" font-size="9.5" font-weight="700" fill="#fff">${n.cut.no}</text>`});
  o+=`<text x="${m+vw/2}" y="${m-9}" text-anchor="middle" font-size="12" fill="#445260">${fu(s.L)}</text><text transform="translate(${m-10} ${m+vh/2}) rotate(-90)" text-anchor="middle" font-size="12" fill="#445260">${fu(s.W)}</text></svg>`;
  return o}
 
@@ -645,7 +695,7 @@ function renderQuote(){
  const wp=S.q.wage>0?S.q.wage:0,mk=k.lines.reduce((a,l)=>a+l.mk*l.p.qty,0),wage=mk*wp/100;
  ih+=`<div class="orow"><span>ЗП работника, %<br><span class="muted">от цены за изготовление: ${money(mk)}</span></span><input type="number" inputmode="decimal" step="any" min="0" max="100" value="${wp||''}" placeholder="0" style="width:100px;min-height:40px" onchange="setWage(this.value)"></div>`;
  if(wp>0){const rest=k.net-costT-wage;ih+=`<div class="orow"><span>ЗП работника (${wp}% от ${money(mk)})</span><b>${money(wage)}</b></div><div class="orow"><span>Остаётся после металла и ЗП</span><b class="${rest>=0?'ok':'bad'}">${money(rest)}${k.net>0?' · '+Math.round(rest/k.net*100)+'%':''}</b></div>`}
- $('qInternal').innerHTML=ih}
+ window.lastInt={cost:costT,wage:wage};$('qInternal').innerHTML=ih}
 function setWage(v){const x=num(v);S.q.wage=x>0?Math.min(100,x):0;save();renderQuote()}
 function quoteText(){
  const k=quoteCalc(),q=S.q,ul=UL[S.cfg.unit];
@@ -672,19 +722,12 @@ function specHtml(){
  return h}
 
 /* архив и работа выполнена */
-function renderArchive(){
- let h='';
- const dr=(S.drafts||[]).filter(d=>d.id!==S.draftId);
- if(dr.length)h+='<h3>В работе (черновики)</h3>'+dr.map(d=>`<div class="orow"><div><b>${esc((d.order&&d.order.client)||'Без имени')}</b><br><span class="muted">${(d.parts||[]).length} поз.${d.by?' · '+esc(d.by):''}</span></div><div style="display:flex;gap:6px"><button class="secondary sm" onclick="openDraft('${d.id}')">Открыть</button><button class="danger sm" onclick="delArch('${d.id}')" aria-label="Удалить">×</button></div></div>`).join('')+'<h3>Выполненные</h3>';
- if(!S.history.length)h+='<p class="muted">Архив пуст.</p>';
- else h+=S.history.slice(0,100).map(h=>`<div class="orow"><div><b>${esc(h.order.client||'Без имени')}</b>${h.order.no?' · № '+esc(h.order.no):''}<br><span class="muted">${h.date} · ${h.parts.length} поз. · ${money(h.total)}${h.by?' · '+esc(h.by):''}</span></div><div style="display:flex;gap:6px"><button class="secondary sm" onclick="openArch('${h.id}')">Открыть</button><button class="danger sm" onclick="delArch('${h.id}')" aria-label="Удалить">×</button></div></div>`).join('');
- $('archive').innerHTML=h}
 function openDraft(id){const d=(S.drafts||[]).find(x=>x.id===id);if(!d)return;
  if(S.parts.length&&!confirm('Заменить текущую заявку этим черновиком?'))return;
  S.parts=JSON.parse(JSON.stringify(d.parts));S.order=Object.assign({client:'',no:'',note:''},d.order);S.q=Object.assign({ppm:0,disc:0,vat:0,extras:[]},JSON.parse(JSON.stringify(d.q||{})));S.draftId=id;S.drafts=S.drafts.filter(x=>x.id!==id);migParts();syncOrder();syncQ();changed();show('order')}
 function openArch(id){const h=S.history.find(x=>x.id===id);if(!h)return;
  if(S.parts.length&&!confirm('Заменить текущую заявку заявкой из архива?'))return;
- S.parts=JSON.parse(JSON.stringify(h.parts));S.order=Object.assign({client:'',no:'',note:''},h.order);S.q=JSON.parse(JSON.stringify(h.q));migParts();syncOrder();syncQ();changed();show('order')}
+ S.parts=JSON.parse(JSON.stringify(h.parts));S.order=Object.assign({client:'',no:'',note:''},h.order);['stage','paid','cost','wage','prepay'].forEach(k=>delete S.order[k]);S.q=JSON.parse(JSON.stringify(h.q));migParts();syncOrder();syncQ();changed();show('order')}
 function delArch(id){if(!confirm('Удалить заявку из архива?'))return;S.history=S.history.filter(x=>x.id!==id);S.drafts=(S.drafts||[]).filter(x=>x.id!==id);S.tomb=S.tomb||[];S.tomb.push(id);save();renderArchive()}
 function sheetPpm(s){const g=result.groups.find(x=>x.mat===s.mat);
  if(s.src==='new')return g&&g.price>0?g.price/(s.L*s.W/1e6):0;
@@ -696,7 +739,8 @@ function doneJob(){
  const pp=result.res.sheets.map(sheetPpm);
  const c=result.cfg,used={},mls=result.groups.map(g=>esc(matLabel(g.mat))).join('; ');let writtenOff=0,added=0;
  const hid=S.draftId||nid();S.draftId=null;undoHid=hid;
- S.history.unshift({id:hid,by:(window.SyncHook&&SyncHook.who())||'',date:today(),order:{...S.order,no:curNo()},parts:JSON.parse(JSON.stringify(S.parts)),q:JSON.parse(JSON.stringify(S.q)),total:quoteCalc().total});
+ S.history.unshift({id:hid,by:(window.SyncHook&&SyncHook.who())||'',date:today(),order:{...S.order,no:curNo(),stage:'ready',paid:Math.max(0,S.order.prepay||0),cost:Math.round((window.lastInt&&lastInt.cost)||0),wage:Math.round((window.lastInt&&lastInt.wage)||0)},parts:JSON.parse(JSON.stringify(S.parts)),q:JSON.parse(JSON.stringify(S.q)),total:quoteCalc().total});
+ {const h0=S.history[0].order;delete h0.prepay;if(h0.paid>S.history[0].total)h0.paid=Math.round(S.history[0].total)}
  S.history=S.history.slice(0,200);
  result.res.sheets.forEach(s=>{if(s.src==='offcut'){used[s.eid]=(used[s.eid]||0)+1;writtenOff++}});
  S.offcuts.forEach(o=>{if(used[o.id])o.qty-=used[o.id]});S.offcuts=S.offcuts.filter(o=>o.qty>0);
@@ -941,19 +985,20 @@ function edDone(){
  const p=getP(E.id);p.segs=segsFromPts(E.pts);p.face=E.face;applyProf(p);openProf.add(E.id);closeEd();changed()}
 
 /* навигация и печать */
-const VN={order:'Заявка',result:'Раскрой',quote:'Цена клиенту',stock:'Склад',archive:'Архив',settings:'Настройки'};
+const VN={clients:'Клиенты',report:'Отчёт',order:'Заявка',result:'Раскрой',quote:'Цена клиенту',stock:'Склад',archive:'Архив',settings:'Настройки'};
 function show(v){cur=v;document.querySelectorAll('.view').forEach(e=>e.hidden=e.id!=='v-'+v);$('menuLbl').textContent=VN[v];
  document.querySelectorAll('#menu button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));$('menu').hidden=true;
- if(v==='result'&&result)render();if(v==='quote')renderQuote();if(v==='archive')renderArchive();if(typeof window.scrollTo==='function')window.scrollTo(0,0)}
+ if(v==='result'&&result)render();if(v==='quote')renderQuote();if(v==='archive')renderArchive();if(v==='clients')renderClients();if(v==='settings'){altFill();uiApply()}if(v==='report')renderReport();if(typeof window.scrollTo==='function')window.scrollTo(0,0)}
 let pvKind='',pvTitle='';
 const uniqIds=html=>html.replace(/id="([^"]+)"/g,(m,i)=>/^((us|sc)\d+|hemp)$/.test(i)?`id="p_${i}"`:m).replace(/url\(#([^)]+)\)/g,(m,i)=>/^((us|sc)\d+|hemp)$/.test(i)?`url(#p_${i})`:m);
 function pvBody(kind){
  if(kind==='order')return specHtml();
+ if(kind==='labels')return labelsHtml();
  if(kind==='quote'){const d=document.createElement('div');d.innerHTML=$('quoteBox').innerHTML;d.querySelectorAll('.noprint').forEach(e=>e.remove());return d.innerHTML}
  return `<div style="margin-bottom:8px">${$('printhead').innerHTML}</div>`+$('result').innerHTML}
 function printView(name){
  if(name==='result'&&(!result||!result.res.sheets.length)){alert('Сначала получи раскрой.');return}
- pvKind=name;pvTitle={order:'Заявка',quote:'Ценник',result:'Карта раскроя'}[name]+' № '+curNo();
+ pvKind=name;pvTitle={order:'Заявка',quote:'Ценник',result:'Карта раскроя',labels:'Наклейки'}[name]+' № '+curNo();
  $('pvTitle').textContent=pvTitle;
  $('pvBody').innerHTML=uniqIds(pvBody(name)).replace(/<details /g,'<details open ');
  $('pv').hidden=false;document.body.classList.add('pvo');document.body.style.overflow='hidden';$('pv').scrollTop=0}
@@ -961,7 +1006,7 @@ function pvClose(){$('pv').hidden=true;document.body.classList.remove('pvo');doc
 function pvDoc(){
  const css=[...document.querySelectorAll('style')].map(s=>s.textContent).join('\n');
  return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'+esc(pvTitle)+'</title><style>'+css+'</style></head><body><main style="display:block;padding:12px"><div class="noprint" style="margin-bottom:10px"><button onclick="window.print()">Печать</button></div>'+$('pvBody').innerHTML+'</main></body></html>'}
-function pvFile(){const nm={order:'zayavka',quote:'cennik',result:'raskroy'}[pvKind]+'_'+curNo()+'.html';return new File([pvDoc()],nm,{type:'text/html'})}
+function pvFile(){const nm={order:'zayavka',quote:'cennik',result:'raskroy',labels:'nakleyki'}[pvKind]+'_'+curNo()+'.html';return new File([pvDoc()],nm,{type:'text/html'})}
 function pvSave(){try{const fl=pvFile(),u=URL.createObjectURL(fl),a=document.createElement('a');a.href=u;a.download=fl.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)}catch(e){alert('Не удалось скачать файл. Попробуйте «Поделиться» или сделайте скриншот.')}}
 function pvShare(){try{const fl=pvFile();if(navigator.canShare&&navigator.canShare({files:[fl]}))navigator.share({files:[fl],title:pvTitle}).catch(()=>{});else if(navigator.share)navigator.share({title:pvTitle,text:pvKind==='quote'?quoteText():pvTitle}).catch(()=>{});else alert('«Поделиться» недоступно в этом браузере. Используйте «Скачать».')}catch(e){alert('Не удалось поделиться.')}}
 function pvPrint(){try{window.print()}catch(e){alert('Печать недоступна в этом окне. Нажмите «Скачать» и откройте файл в браузере.')}}
@@ -980,12 +1025,16 @@ $('calc').onclick=()=>recalc(1800);
 $('zoomBtn').onclick=()=>{zoom=!zoom;$('zoomBtn').textContent=zoom?'Схема по ширине':'Крупная схема';if(result)render()};
 $('done').onclick=doneJob;
 $('print').onclick=()=>printView('result');
+$('stepBtn').onclick=stepOpen;
+$('printLabels').onclick=()=>{if(!S.parts.length){alert('Список деталей пуст.');return}printView('labels')};
 $('printOrder').onclick=()=>{if(!S.parts.length){alert('Список деталей пуст.');return}printView('order')};
 $('qPrint').onclick=()=>{if(!S.parts.length){alert('Список деталей пуст.');return}printView('quote')};
 $('qCopy').onclick=copyQuote;
 $('cAdd').onclick=addColor;$('tAdd').onclick=addTex;
 $('pvClose').onclick=pvClose;$('pvPrint').onclick=pvPrint;$('pvSave').onclick=pvSave;$('pvShare').onclick=pvShare;
-['ordClient','ordNote'].forEach(id=>$(id).addEventListener('change',()=>{S.order.client=$('ordClient').value.trim();S.order.note=$('ordNote').value.trim();save();renderQuote()}));
+['ordClient','ordNote','ordPhone','ordAddr','ordPrepay'].forEach(id=>$(id).addEventListener('change',()=>{S.order.client=$('ordClient').value.trim();S.order.note=$('ordNote').value.trim();S.order.phone=$('ordPhone').value.trim();S.order.addr=$('ordAddr').value.trim();S.order.prepay=Math.max(0,num($('ordPrepay').value)||0);
+ if(id==='ordClient'){const c=clientsAgg().find(x=>x.name.toLowerCase()===S.order.client.toLowerCase());if(c){if(!S.order.phone&&c.phone){S.order.phone=c.phone;$('ordPhone').value=c.phone}if(!S.order.addr&&c.addr){S.order.addr=c.addr;$('ordAddr').value=c.addr}}}
+ save();renderQuote()}));
 ['qPpm','qMake','qDisc','qVat'].forEach(id=>$(id).addEventListener('change',()=>{S.q.ppm=num($('qPpm').value)||0;S.q.make=Math.max(0,num($('qMake').value)||0);S.q.disc=Math.min(100,Math.max(0,num($('qDisc').value)||0));S.q.vat=Math.max(0,num($('qVat').value)||0);save();renderQuote()}));
 $('qxAdd').onclick=()=>{const s=num($('qxSum').value);if(!(s>0)){alert('Укажи сумму.');return}S.q.extras.push({id:nid(),name:$('qxName').value.trim()||'Доп. работы',sum:s});$('qxName').value='';$('qxSum').value='';save();renderQuote()};
 $('edSvg').addEventListener('pointerdown',edDown);$('edSvg').addEventListener('pointermove',edMove);$('edSvg').addEventListener('pointerup',edUp);$('edSvg').addEventListener('pointercancel',edUp);
@@ -1008,8 +1057,131 @@ $('unit').addEventListener('change',()=>{
  ['partA','partB','oL','oW'].forEach(id=>{const v=num($(id).value);if(v>0)$(id).value=Math.round(v*old/UF[nu]*1e4)/1e4});
  curUnit=nu;S.cfg.unit=nu;syncCfg();changed()});
 document.querySelectorAll('.cfg').forEach(el=>el.addEventListener('change',()=>{if(el.id==='rotate'){const r=$('rotate').value==='yes';S.parts.forEach(p=>p.rot=r)}changed()}));
-load();syncCfg();syncQ();syncOrder();lastW=window.innerWidth;renderParts();renderOffs();renderQuote();show('order');
+uiApply();load();syncCfg();altFill();syncQ();syncOrder();lastW=window.innerWidth;renderParts();renderOffs();renderQuote();show('order');
 if(S.parts.length)recalc(250);
+
+/* ===== пакет 1: статусы/оплата, клиенты, отчёт, запас, копия, предупреждения ===== */
+const dnum=s=>{const m=/^(\d+)\.(\d+)\.(\d+)/.exec(s||'');return m?(+m[3])*10000+(+m[2])*100+(+m[1]):0};
+function setArch(id,k,v){const h=S.history.find(x=>x.id===id);if(!h)return;h.order=Object.assign({},h.order);
+ if(k==='paid')h.order.paid=Math.max(0,num(v)||0);else if(k==='payall')h.order.paid=Math.round(h.total||0);else h.order[k]=v;
+ save();renderArchive()}
+function clientsAgg(){const m={};
+ S.history.forEach(h=>{const o=h.order||{},n=(o.client||'').trim();if(!n)return;const k=n.toLowerCase();
+  const c=m[k]||(m[k]={name:n,phone:'',addr:'',orders:0,sum:0,paid:0,last:0,lastS:''});
+  c.orders++;c.sum+=h.total||0;c.paid+=Math.min(h.total||0,o.paid||0);if(!c.phone&&o.phone)c.phone=o.phone;if(!c.addr&&o.addr)c.addr=o.addr;
+  const d=dnum(h.date);if(d>=c.last){c.last=d;c.lastS=h.date}});
+ return Object.values(m).sort((a,b)=>(b.sum-b.paid)-(a.sum-a.paid)||b.last-a.last)}
+function renderClients(){
+ const q=(($('cliQ')&&$('cliQ').value)||'').trim().toLowerCase();
+ const list=clientsAgg().filter(c=>!q||(c.name+' '+c.phone+' '+c.addr).toLowerCase().includes(q));
+ const debt=list.reduce((a,c)=>a+c.sum-c.paid,0);
+ $('clients').innerHTML=(list.length?`<div class="muted" style="margin-bottom:6px">Клиентов: ${list.length} · общий долг: <b class="${debt>0.5?'bad':'ok'}">${money(debt)}</b></div>`:'<p class="muted">Клиентов пока нет — они появятся после первой выполненной заявки.</p>')+
+ list.map(c=>{const d=c.sum-c.paid;return `<div class="orow"><div style="flex:1"><b>${esc(c.name)}</b>${c.phone?' · <a href="tel:'+esc(c.phone)+'">'+esc(c.phone)+'</a>':''}<br><span class="muted">${esc(c.addr||'')}${c.addr?' · ':''}заявок: ${c.orders} · на ${money(c.sum)} · последняя ${c.lastS}</span><br>${d>0.5?'<b class="bad">Долг: '+money(d)+'</b>':'<span class="ok">Долга нет</span>'}</div><button class="secondary sm" onclick="archFor('${esc(c.name).replace(/'/g,'&#39;')}')">Заявки</button></div>`}).join('');
+ const dl=$('cliList');if(dl)dl.innerHTML=clientsAgg().map(c=>`<option value="${esc(c.name)}">`).join('')}
+function archFor(n){show('archive');$('archQ').value=n;renderArchive()}
+function renderArchive(){
+ const q=(($('archQ')&&$('archQ').value)||'').trim().toLowerCase(),st=$('archSt')?$('archSt').value:'';
+ let h='';
+ const dr=(S.drafts||[]).filter(d=>d.id!==S.draftId&&(!q||((d.order&&d.order.client)||'').toLowerCase().includes(q)));
+ if(dr.length&&(!st||st==='draft'))h+='<h3>В работе (черновики)</h3>'+dr.map(d=>`<div class="orow"><div><b>${esc((d.order&&d.order.client)||'Без имени')}</b><br><span class="muted">${(d.parts||[]).length} поз.${d.by?' · '+esc(d.by):''}</span></div><div style="display:flex;gap:6px"><button class="secondary sm" onclick="openDraft('${d.id}')">Открыть</button><button class="danger sm" onclick="delArch('${d.id}')" aria-label="Удалить">×</button></div></div>`).join('')+'<h3>Выполненные</h3>';
+ const list=st==='draft'?[]:S.history.filter(x=>{const o=x.order||{};
+  if(q&&!(`${o.client||''} ${o.no||''} ${x.date} ${Math.round(x.total||0)} ${o.phone||''} ${(x.parts||[]).map(p=>p.name).join(' ')}`.toLowerCase().includes(q)))return false;
+  const debt=(x.total||0)-(o.paid||0);
+  if(st==='ready'&&o.stage==='issued')return false;if(st==='issued'&&o.stage!=='issued')return false;if(st==='debt'&&!(debt>0.5))return false;return true});
+ if(!list.length&&!dr.length)h+='<p class="muted">Ничего не найдено.</p>';
+ h+=list.slice(0,100).map(x=>{const o=x.order||{},debt=Math.max(0,(x.total||0)-(o.paid||0));
+  return `<div class="orow" style="display:block"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>${esc(o.client||'Без имени')}</b>${o.no?' · № '+esc(o.no):''}<br><span class="muted">${x.date} · ${x.parts.length} поз. · ${money(x.total||0)}${x.by?' · '+esc(x.by):''}</span></div><div style="display:flex;gap:6px;align-items:flex-start"><button class="secondary sm" onclick="openArch('${x.id}')">Повторить</button><button class="danger sm" onclick="delArch('${x.id}')" aria-label="Удалить">×</button></div></div>
+  <div class="arow2"><div><label>Статус</label><select onchange="setArch('${x.id}','stage',this.value)"><option value="ready" ${o.stage!=='issued'?'selected':''}>Готово</option><option value="issued" ${o.stage==='issued'?'selected':''}>Выдано</option></select></div><div><label>Оплачено, ₽</label><input type="number" inputmode="decimal" min="0" step="any" value="${o.paid||''}" placeholder="0" onchange="setArch('${x.id}','paid',this.value)"></div></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">${debt>0.5?'<b class="bad">Долг: '+money(debt)+'</b><button class="secondary sm" onclick="setArch(\''+x.id+'\',\'payall\')">Оплачено полностью</button>':'<span class="ok">Оплачено</span>'}</div></div>`}).join('');
+ $('archive').innerHTML=h}
+function renderReport(){
+ const mi=$('repMonth');if(!mi.value){const d=new Date();mi.value=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
+ const [Y,M]=mi.value.split('-').map(Number);
+ const rows=S.history.filter(h=>{const m=/^(\d+)\.(\d+)\.(\d+)/.exec(h.date||'');return m&&+m[3]===Y&&+m[2]===M});
+ let rev=0,cost=0,wage=0,area=0,withCost=0,paid=0,pieces=0;const mats={},cli={};
+ rows.forEach(h=>{const o=h.order||{};rev+=h.total||0;paid+=Math.min(h.total||0,o.paid||0);if(o.cost!==undefined){cost+=o.cost;wage+=o.wage||0;withCost++}
+  (h.parts||[]).forEach(p=>{const a=p.a*p.b*p.qty/1e6;area+=a;pieces+=p.qty;const m=pmat(p),k=matLabel(m);mats[k]=(mats[k]||0)+a});
+  const n=(o.client||'Без имени');cli[n]=(cli[n]||0)+(h.total||0)});
+ const profit=rev-cost-wage,top=(o,n)=>Object.entries(o).sort((a,b)=>b[1]-a[1]).slice(0,n);
+ let t=`<div class="metrics"><div class="metric"><span>Заявок</span><b>${rows.length}</b><small>деталей: ${pieces}</small></div><div class="metric"><span>Выручка</span><b>${money(rev)}</b><small>оплачено ${money(paid)}</small></div><div class="metric"><span>Долг клиентов</span><b class="${rev-paid>0.5?'bad':''}">${money(Math.max(0,rev-paid))}</b></div><div class="metric"><span>Металл</span><b>${money(cost)}</b><small>расход по себестоимости</small></div><div class="metric"><span>ЗП</span><b>${money(wage)}</b></div><div class="metric"><span>Прибыль</span><b class="${profit>=0?'ok':'bad'}">${money(profit)}</b><small>${rev>0?Math.round(profit/rev*100)+'% от выручки':''}</small></div><div class="metric"><span>Площадь деталей</span><b>${fm2(area)} м²</b></div></div>`;
+ if(rows.length&&withCost<rows.length)t+=`<div class="warn">У ${rows.length-withCost} заявок нет данных о себестоимости (выполнены до этой версии) — прибыль по ним завышена.</div>`;
+ if(!rows.length)t='<p class="muted">В этом месяце выполненных заявок нет.</p>';
+ else{t+='<h3>Материалы (по площади)</h3>'+top(mats,8).map(([k,v])=>`<div class="orow"><span>${esc(k)}</span><b>${fm2(v)} м²</b></div>`).join('')+'<h3>Клиенты</h3>'+top(cli,8).map(([k,v])=>`<div class="orow"><span>${esc(k)}</span><b>${money(v)}</b></div>`).join('')}
+ $('report').innerHTML=t}
+const matKey=m=>normRal(m.ral)+'|'+normTex(m.tex)+'|'+Math.round(m.thick*100);
+function setMinStock(k,v){S.minStock=S.minStock||{};const x=num(v);const e=S.minStock[k]||{};if(x>0)S.minStock[k]=Object.assign({},e,{min:x});else delete S.minStock[k];save();renderStockLvl()}
+function renderStockLvl(){
+ const el=$('stockLvl');if(!el)return;const g={};
+ const add=(m,a)=>{const k=matKey(m);const x=g[k]||(g[k]={m:{ral:m.ral||'',tex:m.tex||'',thick:m.thick},area:0});x.area+=a};
+ S.offcuts.forEach(o=>add(o,o.L*o.W*o.qty/1e6));S.parts.forEach(p=>add(pmat(p),0));
+ Object.keys(S.minStock||{}).forEach(k=>{if(!g[k]){const e=S.minStock[k];if(e&&e.thick)g[k]={m:{ral:e.ral||'',tex:e.tex||'',thick:e.thick},area:0}}});
+ const sheetA=S.cfg.L*S.cfg.W/1e6;
+ const rows=Object.entries(g).map(([k,x])=>{const mn=(S.minStock&&S.minStock[k]&&S.minStock[k].min)||0;return{k,x,mn,low:mn>0&&x.area<mn}}).sort((a,b)=>b.low-a.low);
+ if(!rows.length){el.innerHTML='<p class="muted">Пока нет материалов: добавь остатки или детали.</p>';return}
+ el.innerHTML=rows.map(r=>`<div class="orow" style="display:block"><div style="display:flex;justify-content:space-between;gap:8px"><span>${esc(matLabel(r.x.m))}${ralSw(r.x.m.ral)}</span><b>${fm2(r.x.area)} м²</b></div><div style="display:flex;gap:8px;align-items:center;margin-top:4px"><label style="margin:0;white-space:nowrap">Мин. запас, м²</label><input type="number" inputmode="decimal" min="0" step="any" value="${r.mn||''}" placeholder="не задан" onchange="setMinStock('${r.k.replace(/'/g,'')}',this.value);S.minStock['${r.k.replace(/'/g,'')}']&&(S.minStock['${r.k.replace(/'/g,'')}'].ral='${esc(r.x.m.ral)}',S.minStock['${r.k.replace(/'/g,'')}'].tex='${esc(r.x.m.tex)}',S.minStock['${r.k.replace(/'/g,'')}'].thick=${r.x.m.thick},save())" style="max-width:130px"></div>${r.low?`<div class="bad" style="margin-top:4px">⚠ Докупить: не хватает ${fm2(r.mn-r.x.area)} м² (≈ ${Math.ceil((r.mn-r.x.area)/sheetA)} лист.)</div>`:''}</div>`).join('')}
+function backupData(){return{app:'metalcut',v:1,date:new Date().toISOString(),offcuts:S.offcuts,history:S.history,colors:S.colors,texs:S.texs,tpls:S.tpls,minStock:S.minStock,cfg:S.cfg,counter:S.counter,order:S.order,parts:S.parts,q:S.q}}
+function backupFile(){const d=new Date(),n='metalcut_copy_'+d.getFullYear()+String(d.getMonth()+1).padStart(2,'0')+String(d.getDate()).padStart(2,'0')+'.json';return new File([new Blob([JSON.stringify(backupData())],{type:'application/json'})],n,{type:'application/json'})}
+function backupSave(){try{const f=backupFile(),u=URL.createObjectURL(f),a=document.createElement('a');a.href=u;a.download=f.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)}catch(e){alert('Не удалось скачать файл. Попробуйте «Поделиться копией».')}}
+function backupShare(){try{const f=backupFile();if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f],title:'Копия MetalCut'}).catch(()=>{});else alert('«Поделиться» недоступно здесь. Используйте «Скачать копию».')}catch(e){alert('Не удалось поделиться файлом.')}}
+function backupLoad(file){if(!file)return;const r=new FileReader();r.onload=()=>{let d;try{d=JSON.parse(r.result)}catch(e){alert('Это не файл копии MetalCut.');return}
+ if(!d||d.app!=='metalcut'){alert('Это не файл копии MetalCut.');return}
+ if(!confirm('Восстановить из копии?\n\nОстатки на складе будут заменены данными из копии, заявки из архива добавятся (существующие не удаляются).'))return;
+ S.offcuts=(d.offcuts||[]).map(o=>Object.assign({},o));migOff();
+ (d.history||[]).forEach(h=>{if(!S.history.some(x=>x.id===h.id))S.history.push(h)});S.history.sort((a,b)=>dnum(b.date)-dnum(a.date));
+ const un=(a,c,k)=>{const o=(a||[]).slice();(c||[]).forEach(x=>{if(!o.some(y=>String(y[k]).toLowerCase()===String(x[k]).toLowerCase()))o.push(x)});return o};
+ S.colors=un(S.colors,d.colors,'name');S.texs=un(S.texs,d.texs,'n');S.tpls=un(S.tpls,d.tpls,'n');S.minStock=Object.assign({},d.minStock||{},S.minStock||{});
+ if(d.cfg){const u=S.cfg.unit;S.cfg=Object.assign(S.cfg,d.cfg);S.cfg.unit=u}
+ S.counter=Math.max(S.counter||0,d.counter||0);
+ if(!S.parts.length&&d.parts&&d.parts.length){S.parts=d.parts;S.order=Object.assign({client:'',no:'',note:''},d.order||{});S.q=Object.assign(S.q,d.q||{})}
+ migParts();syncCfg();syncQ();syncOrder();changed();renderStockLvl();alert('Готово: данные восстановлены из копии.')};r.readAsText(file)}
+window.NEG=[];
+function warnBar(){const b=$('warnBar');if(!b)return;const n=window.NEG||[];
+ if(!n.length){b.hidden=true;b.innerHTML='';return}
+ b.hidden=false;b.innerHTML='⚠ <b>Остаток списан дважды</b> (скорее всего, два человека взяли один и тот же): '+n.map(o=>`${fl(o.L)}×${fl(o.W)} ${UL[S.cfg.unit]}, ${o.thick} мм, ${esc(coatLabel(o.ral,o.tex))} — ${-o.qty} шт`).join('; ')+'. Проверь, что реально есть на складе. <button class="secondary sm" style="margin-top:6px" onclick="fixNeg()">Понятно, обнулить</button>'}
+function fixNeg(){if(window.SyncHook)SyncHook.fixNeg();window.NEG=[];warnBar()}
+/* ===== пакет 2: пошаговый рез, наклейки, размеры листа, вид ===== */
+let ST={si:0,k:0};
+function stepList(s){const a=[];if(s.trimCuts)a.push({t:'trim'});s.cutNodes.forEach(n=>a.push({t:'cut',n}));return a}
+function stepOpen(){
+ if(!result||!result.res.sheets.length){alert('Сначала получи раскрой.');return}
+ ST={si:0,k:0};$('stepv').hidden=false;document.body.style.overflow='hidden';stepRender()}
+function stepClose(){$('stepv').hidden=true;document.body.style.overflow='';window.hiCut=undefined}
+function stepGo(d){const sh=result.res.sheets,L=stepList(sh[ST.si]).length;
+ let k=ST.k+d;
+ if(k<0){if(ST.si>0){ST.si--;k=stepList(sh[ST.si]).length}else k=0}
+ else if(k>L){if(ST.si<sh.length-1){ST.si++;k=0}else k=L}
+ ST.k=k;stepRender()}
+function stepRender(){
+ const sh=result.res.sheets,s=sh[ST.si],list=stepList(s),k=ST.k,done=k>=list.length,ul=UL[S.cfg.unit];
+ const w=Math.min(900,(typeof innerWidth==='number'?innerWidth:380)-24);
+ const cur=list[k];window.hiCut=cur?(cur.t==='cut'?cur.n.cut.no:0):-1;
+ const svg=uniqIds(svgSheet(s,ST.si,w));window.hiCut=undefined;
+ $('stTitle').textContent=`Лист ${ST.si+1} из ${sh.length}`;
+ let h=`<div class="muted" style="margin-bottom:6px">${s.src==='new'?'Новый лист':'Из остатка'} ${fu(s.L)} × ${fu(s.W)} · ${esc(matLabel(s.mat,1))}</div>`;
+ if(!done){
+  const txt=cur.t==='trim'?`Обрезать кромку ${fu(s.trim)} по периметру (4 реза)`:cutText(cur.n);
+  h+=`<div class="stbig"><div class="muted">Шаг ${k+1} из ${list.length}</div><div class="sttxt">${txt}</div></div>`}
+ else{
+  const cnt={};s.pieces.forEach(n=>{const p=S.parts.find(x=>x.id===n.piece.gid);const key=n.piece.name+'|'+(p&&p.note||'');cnt[key]=(cnt[key]||0)+1});
+  h+=`<div class="toast"><b>✓ Лист ${ST.si+1} раскроен.</b> Деталей: ${s.pieces.length}<br>${Object.entries(cnt).map(([k2,v])=>{const [n,no]=k2.split('|');return esc(n)+' × '+v+(no?' — <i>'+esc(no)+'</i>':'')}).join('<br>')}</div>`}
+ h+=svg;
+ const last=ST.si===sh.length-1;
+ h+=`<div class="stbtn"><button class="secondary" onclick="stepGo(-1)" ${ST.si===0&&k===0?'disabled':''}>◀ Назад</button><button onclick="${done&&last?'stepClose()':'stepGo(1)'}">${done?(last?'Закончить':'Следующий лист ▶'):'Готово ▶'}</button></div>`;
+ $('stBody').innerHTML=h;$('stepv').scrollTop=0}
+function labelsHtml(){
+ const ul=UL[S.cfg.unit],o=S.order;let n=0;
+ const rows=S.parts.map(p=>{n+=p.qty;const m=pmat(p);return `<tr><td>${esc(p.name)}${p.note?'<br><i>'+esc(p.note)+'</i>':''}</td><td>${fl(p.a)} × ${fl(p.b)} ${ul}</td><td>${p.qty} шт.</td><td class="mt">${esc(matLabel(m))}</td></tr>`}).join('');
+ return `<div class="lblgrid one"><div class="lbl"><div class="ls">${esc(o.client||'Без имени')}</div><div class="muted">Заявка № ${curNo()} · ${today()}${o.phone?' · '+esc(o.phone):''}${o.addr?'<br>'+esc(o.addr):''}</div><table class="lt big"><tr><th>Деталь</th><th>Размер</th><th>Кол-во</th><th>Материал</th></tr>${rows}</table><div style="margin-top:4px"><b>Всего: ${n} шт.</b>${o.note?' · '+esc(o.note):''}</div></div></div>`}
+function altFill(){const el=$('altSz');if(el)el.value=(S.cfg.alt||[]).map(([L,W])=>inV(L)+'x'+inV(W)).join('; ')}
+function altSet(v){const fx=f(),out=[];String(v).split(/[;,\n]+/).forEach(t=>{const m=t.replace(',','.').match(/(\d+(?:\.\d+)?)\s*[xх×*]\s*(\d+(?:\.\d+)?)/i);if(m){const L=Math.round(+m[1]*fx),W=Math.round(+m[2]*fx);if(L>0&&W>0)out.push([L,W])}});
+ S.cfg.alt=out;altFill();save();changed()}
+/* вид: тема и крупный интерфейс (только на этом устройстве) */
+function uiGet(){try{return Object.assign({theme:'light',big:false},JSON.parse(localStorage.getItem('mc_ui')||'{}'))}catch(e){return{theme:'light',big:false}}}
+function uiApply(){const u=uiGet();let t=u.theme;if(t==='auto')t=(typeof matchMedia==='function'&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';
+ document.documentElement.dataset.theme=t;document.documentElement.classList.toggle('big',!!u.big);
+ const m=document.querySelector('meta[name=theme-color]');if(m)m.content=t==='dark'?'#0b0f14':'#18212b';
+ if($('uiTheme')){$('uiTheme').value=u.theme;$('uiBig').value=u.big?'1':'0'}}
+function uiSet(){const u={theme:$('uiTheme').value,big:$('uiBig').value==='1'};try{localStorage.setItem('mc_ui',JSON.stringify(u))}catch(e){}uiApply()}
 </script>
 <script type="module">
 /* MetalCut — облачная синхронизация (Firebase Auth + Firestore). Работает поверх локального хранилища. */
@@ -1030,7 +1202,7 @@ const hs=t=>{let h=5381;for(let i=0;i<t.length;i++)h=((h<<5)+h+t.charCodeAt(i))|
 const B=()=>S.base||(S.base={init:false,uid:'',off:{},ord:{},ordT:{},cfg:'',lib:''});
 const ready=()=>!!(FB&&db&&user&&B().init);
 const cfgP=()=>{const c=Object.assign({},S.cfg);delete c.unit;return c};
-const libP=()=>({colors:S.colors||[],texs:S.texs||[],tpls:S.tpls||[]});
+const libP=()=>({colors:S.colors||[],texs:S.texs||[],tpls:S.tpls||[],minStock:S.minStock||{}});
 const ordP=(o,st)=>({status:st,date:o.date||'',order:o.order||{},parts:o.parts||[],q:o.q||{},total:o.total||0});
 const curOrd=()=>({date:'',order:S.order,parts:S.parts,q:S.q,total:0});
 const who=()=>user?(user.displayName||(user.email||'').split('@')[0]):'';
@@ -1098,7 +1270,8 @@ function push(){
 function onOff(snap){
  if(!B().init){first();return}
  flush();
- const arr=[];snap.forEach(d=>{const o=d.data();if(o.qty>0&&o.L>0&&o.W>0)arr.push({id:d.id,L:o.L,W:o.W,ral:o.ral||'',thick:o.thick,tex:o.tex||'',ppm:o.ppm||0,qty:Math.round(o.qty)})});
+ const arr=[],neg=[];snap.forEach(d=>{const o=d.data();if(o.qty<0&&o.L>0&&o.W>0)neg.push({id:d.id,L:o.L,W:o.W,ral:o.ral||'',thick:o.thick,tex:o.tex||'',qty:Math.round(o.qty)});if(o.qty>0&&o.L>0&&o.W>0)arr.push({id:d.id,L:o.L,W:o.W,ral:o.ral||'',thick:o.thick,tex:o.tex||'',ppm:o.ppm||0,qty:Math.round(o.qty)})});
+ window.NEG=neg;if(typeof warnBar==='function')warnBar();
  S.offcuts=arr;B().off=Object.fromEntries(arr.map(o=>[o.id,o.qty]));persist();refresh()}
 function onOrd(snap){
  if(!B().init){first();return}
@@ -1121,7 +1294,7 @@ function onCfg(snap){
  applyDoc(snap,'cfg',d=>{const r=Object.assign({},d);delete r.updatedAt;delete r.dev;const unit=S.cfg.unit;S.cfg=Object.assign(S.cfg,r);S.cfg.unit=unit;B().cfg=hs(stab(cfgP()));syncCfg();persist();refresh()})}
 function onLib(snap){
  if(!B().init){first();return}
- applyDoc(snap,'lib',d=>{S.colors=d.colors||[];S.texs=d.texs||[];S.tpls=d.tpls||[];B().lib=hs(stab(libP()));persist();refresh()})}
+ applyDoc(snap,'lib',d=>{S.colors=d.colors||[];S.texs=d.texs||[];S.tpls=d.tpls||[];S.minStock=d.minStock||{};B().lib=hs(stab(libP()));persist();refresh()})}
 function onCnt(snap){if(!snap.exists())return;const n=snap.data().n;if(n>0&&n!==S.counter){S.counter=n;persist();if(typeof renderQuote==='function')renderQuote();if(typeof syncOrder==='function')syncOrder()}}
 
 function first(){
@@ -1137,7 +1310,7 @@ function first(){
   S.offcuts=[];
   if(last.cfg.exists()){const r=Object.assign({},last.cfg.data());delete r.updatedAt;delete r.dev;const u=S.cfg.unit;S.cfg=Object.assign(S.cfg,r);S.cfg.unit=u;b.cfg=hs(stab(cfgP()));syncCfg()}
   if(last.lib.exists()){const d=last.lib.data();const un=(a,c,k)=>{const o=(a||[]).slice();(c||[]).forEach(x=>{if(!o.some(y=>String(y[k]).toLowerCase()===String(x[k]).toLowerCase()))o.push(x)});return o};
-   S.colors=un(d.colors,keepLib.colors,'name');S.texs=un(d.texs,keepLib.texs,'n');S.tpls=un(d.tpls,keepLib.tpls,'n')}
+   S.colors=un(d.colors,keepLib.colors,'name');S.texs=un(d.texs,keepLib.texs,'n');S.tpls=un(d.tpls,keepLib.tpls,'n');S.minStock=Object.assign({},keepLib.minStock||{},d.minStock||{})}
   onOff(last.off);onOrd(last.ord);
   keepHist.forEach(h=>{if(!S.history.some(x=>x.id===h.id))S.history.push(h)});
  }
@@ -1166,6 +1339,7 @@ window.SyncHook={
  dirty(){if(!ready())return;if(timer)clearTimeout(timer);timer=setTimeout(push,350)},
  bump(d){if(!ready())return;FB.setDoc(FB.doc(db,'meta','counter'),{n:FB.increment(d)},{merge:true})},
  who(){return who()},
+ fixNeg(){if(!ready())return;(window.NEG||[]).forEach(o=>{FB.setDoc(FB.doc(db,'offcuts',o.id),{qty:FB.increment(-o.qty)},{merge:true})})},
  _state(){return{user:!!user,init:B().init,pend:Object.assign({},pend)}}};
 document.addEventListener('visibilitychange',()=>{if(document.hidden)flush()});
 addEventListener('pagehide',flush);
