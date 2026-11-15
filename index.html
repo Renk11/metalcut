@@ -735,7 +735,7 @@ function openDraft(id){const d=(S.drafts||[]).find(x=>x.id===id);if(!d)return;
  S.parts=JSON.parse(JSON.stringify(d.parts));S.order=Object.assign({client:'',no:'',note:''},d.order);S.q=Object.assign({ppm:0,disc:0,vat:0,extras:[]},JSON.parse(JSON.stringify(d.q||{})));S.draftId=id;S.drafts=S.drafts.filter(x=>x.id!==id);migParts();syncOrder();syncQ();changed();show('order')}
 function openArch(id){const h=S.history.find(x=>x.id===id);if(!h)return;
  if(S.parts.length&&!confirm('Заменить текущую заявку заявкой из архива?'))return;
- S.parts=JSON.parse(JSON.stringify(h.parts));S.order=Object.assign({client:'',no:'',note:''},h.order);['stage','paid','cost','wage','prepay'].forEach(k=>delete S.order[k]);S.q=JSON.parse(JSON.stringify(h.q));migParts();syncOrder();syncQ();changed();show('order')}
+ S.parts=JSON.parse(JSON.stringify(h.parts));S.order=Object.assign({client:'',no:'',note:''},h.order);['stage','paid','cost','wage','prepay','reqId'].forEach(k=>delete S.order[k]);S.q=JSON.parse(JSON.stringify(h.q));migParts();syncOrder();syncQ();changed();show('order')}
 function delArch(id){if(!confirm('Удалить заявку из архива?'))return;S.history=S.history.filter(x=>x.id!==id);S.drafts=(S.drafts||[]).filter(x=>x.id!==id);S.tomb=S.tomb||[];S.tomb.push(id);save();renderArchive()}
 function sheetPpm(s){const g=result.groups.find(x=>x.mat===s.mat);
  if(s.src==='new')return g&&g.price>0?g.price/(s.L*s.W/1e6):0;
@@ -746,7 +746,7 @@ function doneJob(){
  undoSnap=JSON.stringify(S);
  const pp=result.res.sheets.map(sheetPpm);
  const c=result.cfg,used={},mls=result.groups.map(g=>esc(matLabel(g.mat))).join('; ');let writtenOff=0,added=0;
- const hid=S.draftId||nid();S.draftId=null;undoHid=hid;
+ const hid=S.draftId||nid();S.draftId=null;undoHid=hid;const reqId=S.order.reqId||null;
  S.history.unshift({id:hid,by:(window.SyncHook&&SyncHook.who())||'',date:today(),order:{...S.order,no:curNo(),stage:'ready',paid:Math.max(0,S.order.prepay||0),cost:Math.round((window.lastInt&&lastInt.cost)||0),wage:Math.round((window.lastInt&&lastInt.wage)||0)},parts:JSON.parse(JSON.stringify(S.parts)),q:JSON.parse(JSON.stringify(S.q)),total:quoteCalc().total});
  {const h0=S.history[0].order;delete h0.prepay;if(h0.paid>S.history[0].total)h0.paid=Math.round(S.history[0].total)}
  S.history=S.history.slice(0,200);
@@ -754,12 +754,14 @@ function doneJob(){
  S.offcuts.forEach(o=>{if(used[o.id])o.qty-=used[o.id]});S.offcuts=S.offcuts.filter(o=>o.qty>0);
  result.res.sheets.forEach((s,si)=>s.leaves.forEach(l=>{if(l.usable){addOff(l.w,l.h,1,s.mat.ral||null,s.mat.thick,s.mat.tex||'нет',pp[si]);added++}}));
  S.counter=Math.max(S.counter||0,histMax());if(window.SyncHook)SyncHook.bump(1);S.parts=[];S.order={client:'',no:'',note:''};S.q.extras=[];syncOrder();syncQ();changed();
+ window.undoReq=reqId;if(reqId&&window.SyncHook)SyncHook.reqSet(reqId,{status:'done',doneAt:Date.now(),doneBy:SyncHook.who()||''});
  $('stockNote').innerHTML=`<div class="toast"><b>✓ Склад обновлён автоматически.</b><br>Списано остатков: ${writtenOff} шт. · записано новых: ${added} шт. (${mls}). Заявка перенесена в архив.<div class="actions"><button class="secondary" onclick="undoJob()">Отменить</button><button class="secondary" onclick="$('stockNote').innerHTML=''">Скрыть</button></div></div>`}
 function undoJob(){
  if(!undoSnap)return;
  const nb=S.base,nt=(S.tomb||[]).slice(),hid=undoHid;
  try{S=JSON.parse(undoSnap);curUnit=S.cfg.unit}catch(e){return}
  S.base=nb;S.tomb=nt;S.drafts=S.drafts||[];if(hid&&hid!==S.draftId)S.tomb.push(hid);S.counter=Math.max(0,(S.counter||0));if(window.SyncHook)SyncHook.bump(-1);
+ if(window.undoReq&&window.SyncHook)SyncHook.reqSet(window.undoReq,{status:'taken'});window.undoReq=null;
  undoSnap=null;$('stockNote').innerHTML='';syncCfg();syncQ();syncOrder();changed()}
 
 /* ---- чертёж для гибщика ---- */
@@ -1204,19 +1206,21 @@ function reqRender(){const n=reqNew(),d=$('inboxDot'),m=$('inboxN');
 function reqTime(t){if(!t)return'';const d=new Date(t);return d.toLocaleDateString('ru-RU')+' '+d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}
 function renderInbox(){
  const el=$('inbox');if(!el)return;
- let h='<div class="muted" style="margin-bottom:6px">Версия приложения: 18 · вложения (фото, PDF) поддерживаются</div>';
+ let h='<div class="muted" style="margin-bottom:6px">Версия приложения: 19 · вложения (фото, PDF) поддерживаются</div>';
  if(window.Notification&&Notification.permission==='default')h+='<div class="warn">Чтобы приложение показывало уведомление, когда оно свёрнуто, <button class="secondary sm" onclick="Notification.requestPermission().then(renderInbox)">включи уведомления</button>. Если приложение полностью закрыто — уведомление придёт в Telegram.</div>';
  if(!window.REQ){el.innerHTML=h+'<p class="muted">Заявки с сайта появятся здесь после входа через ☁ (Google). Если вход выполнен, а список не грузится — проверь правила Firestore (в инструкции к сайту).</p>';return}
  if(!window.REQ.length){el.innerHTML=h+'<p class="muted">Заявок с сайта пока нет.</p>';return}
- h+=window.REQ.map(r=>{const nw=r.status==='new',tk=r.status==='taken';
-  return `<div class="orow" style="display:block;${nw?'border-left:4px solid #f07824;padding-left:8px':''}"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>${esc(r.name||'')}</b> · <a href="tel:${esc(r.phone||'')}">${esc(r.phone||'')}</a><br><span class="muted">${reqTime(r._t)}${r.item?' · '+esc(r.item):''}${r.color?' · '+esc(r.color):''}</span></div><div>${nw?'<b class="bad">Новая</b>':tk?'<span class="ok">В работе'+(r.takenBy?' · '+esc(r.takenBy):'')+'</span>':'<span class="muted">'+esc(r.status||'')+'</span>'}</div></div>${r.text?'<div style="margin:6px 0;white-space:pre-wrap">'+esc(r.text)+'</div>':''}${(r.files&&r.files.length)?'<div class="rfiles">'+r.files.map((f,i)=>(String(f.type||'').startsWith('image/')?`<img src="${f.data}" alt="${esc(f.name||'')}" onclick="reqFile('${r.id}',${i})">`:`<button class="secondary sm" onclick="reqFile('${r.id}',${i})">📄 ${esc(f.name||'файл')}</button>`)).join('')+'</div>':''}<div class="actions" style="margin-top:6px">${nw?`<button class="sm" onclick="reqTake('${r.id}')">Взять в работу</button>`:`<button class="secondary sm" onclick="reqTake('${r.id}')">Открыть в заявке</button>`}<button class="secondary sm" onclick="location.href='tel:${esc(r.phone||'')}'">📞 Позвонить</button><button class="danger sm" onclick="reqDel('${r.id}')" aria-label="Удалить">×</button></div></div>`}).join('');
+ const ord={new:0,taken:1};
+ h+=window.REQ.slice().sort((a,b)=>(ord[a.status]??2)-(ord[b.status]??2)||b._t-a._t).map(r=>{const nw=r.status==='new',tk=r.status==='taken',dn=r.status==='done';
+  return `<div class="orow" style="display:block;${nw?'border-left:4px solid #f07824;padding-left:8px':''}${dn?'opacity:.6':''}"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>${esc(r.name||'')}</b> · <a href="tel:${esc(r.phone||'')}">${esc(r.phone||'')}</a><br><span class="muted">${reqTime(r._t)}${r.item?' · '+esc(r.item):''}${r.color?' · '+esc(r.color):''}</span></div><div>${nw?'<b class="bad">Новая</b>':dn?'<span class="ok">✓ Выполнена</span>':tk?'<span class="ok">В работе'+(r.takenBy?' · '+esc(r.takenBy):'')+'</span>':'<span class="muted">'+esc(r.status||'')+'</span>'}</div></div>${r.text?'<div style="margin:6px 0;white-space:pre-wrap">'+esc(r.text)+'</div>':''}${(r.files&&r.files.length)?'<div class="rfiles">'+r.files.map((f,i)=>(String(f.type||'').startsWith('image/')?`<img src="${f.data}" alt="${esc(f.name||'')}" onclick="reqFile('${r.id}',${i})">`:`<button class="secondary sm" onclick="reqFile('${r.id}',${i})">📄 ${esc(f.name||'файл')}</button>`)).join('')+'</div>':''}<div class="actions" style="margin-top:6px">${nw?`<button class="sm" onclick="reqTake('${r.id}')">Взять в работу</button>`:dn?'':`<button class="secondary sm" onclick="reqTake('${r.id}')">Открыть в заявке</button><button class="secondary sm" onclick="reqDone('${r.id}')">✓ Выполнена</button>`}<button class="secondary sm" onclick="location.href='tel:${esc(r.phone||'')}'">📞 Позвонить</button><button class="danger sm" onclick="reqDel('${r.id}')" aria-label="Удалить">×</button></div></div>`}).join('');
  el.innerHTML=h}
 function reqTake(id){const r=(window.REQ||[]).find(x=>x.id===id);if(!r)return;
  if((S.order.client&&S.order.client!==r.name)&&!confirm('Данные клиента в текущей заявке («'+S.order.client+'») будут заменены. Детали останутся. Продолжить?'))return;
- S.order.client=r.name||'';S.order.phone=r.phone||'';
+ S.order.client=r.name||'';S.order.phone=r.phone||'';S.order.reqId=id;
  S.order.note=[r.item,r.color,r.text].filter(Boolean).join(' · ').slice(0,500);
  save();syncOrder();if(r.status==='new'&&window.SyncHook)SyncHook.reqSet(id,{status:'taken',takenBy:SyncHook.who()||'',takenAt:Date.now()});
  show('order')}
+function reqDone(id){if(window.SyncHook)SyncHook.reqSet(id,{status:'done',doneAt:Date.now(),doneBy:SyncHook.who()||''})}
 function reqDel(id){if(!confirm('Удалить заявку с сайта?'))return;if(window.SyncHook)SyncHook.reqDel(id)}
 
 function reqFile(id,i){const r=(window.REQ||[]).find(x=>x.id===id),f=r&&r.files&&r.files[i];if(!f)return;
