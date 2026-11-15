@@ -65,6 +65,8 @@ html[data-theme=dark] .lbl{border-color:#8896a4}
 html.big body{zoom:1.18}html.big button{min-height:52px}html.big input,html.big select{min-height:52px}
 }
 .dot{display:inline-block;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#d93025;color:#fff;font-size:11px;line-height:18px;text-align:center;margin-left:6px;font-weight:700}
+.rfiles{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}.rfiles img{height:84px;border-radius:8px;border:1px solid #dce2e8;cursor:zoom-in}
+.imgv{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:90;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px}.imgv img{max-width:100%;max-height:80vh;border-radius:8px}.imgb{display:flex;gap:10px}
 .arow2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
 .orow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #edf0f3;font-size:14px;line-height:1.45}
 details.adv{margin-top:6px}details.adv summary{font-size:13px;color:#445260;font-weight:600;cursor:pointer;min-height:32px}
@@ -1207,7 +1209,7 @@ function renderInbox(){
  if(!window.REQ){el.innerHTML=h+'<p class="muted">Заявки с сайта появятся здесь после входа через ☁ (Google). Если вход выполнен, а список не грузится — проверь правила Firestore (в инструкции к сайту).</p>';return}
  if(!window.REQ.length){el.innerHTML=h+'<p class="muted">Заявок с сайта пока нет.</p>';return}
  h+=window.REQ.map(r=>{const nw=r.status==='new',tk=r.status==='taken';
-  return `<div class="orow" style="display:block;${nw?'border-left:4px solid #f07824;padding-left:8px':''}"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>${esc(r.name||'')}</b> · <a href="tel:${esc(r.phone||'')}">${esc(r.phone||'')}</a><br><span class="muted">${reqTime(r._t)}${r.item?' · '+esc(r.item):''}${r.color?' · '+esc(r.color):''}</span></div><div>${nw?'<b class="bad">Новая</b>':tk?'<span class="ok">В работе'+(r.takenBy?' · '+esc(r.takenBy):'')+'</span>':'<span class="muted">'+esc(r.status||'')+'</span>'}</div></div>${r.text?'<div style="margin:6px 0;white-space:pre-wrap">'+esc(r.text)+'</div>':''}<div class="actions" style="margin-top:6px">${nw?`<button class="sm" onclick="reqTake('${r.id}')">Взять в работу</button>`:`<button class="secondary sm" onclick="reqTake('${r.id}')">Открыть в заявке</button>`}<button class="secondary sm" onclick="location.href='tel:${esc(r.phone||'')}'">📞 Позвонить</button><button class="danger sm" onclick="reqDel('${r.id}')" aria-label="Удалить">×</button></div></div>`}).join('');
+  return `<div class="orow" style="display:block;${nw?'border-left:4px solid #f07824;padding-left:8px':''}"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>${esc(r.name||'')}</b> · <a href="tel:${esc(r.phone||'')}">${esc(r.phone||'')}</a><br><span class="muted">${reqTime(r._t)}${r.item?' · '+esc(r.item):''}${r.color?' · '+esc(r.color):''}</span></div><div>${nw?'<b class="bad">Новая</b>':tk?'<span class="ok">В работе'+(r.takenBy?' · '+esc(r.takenBy):'')+'</span>':'<span class="muted">'+esc(r.status||'')+'</span>'}</div></div>${r.text?'<div style="margin:6px 0;white-space:pre-wrap">'+esc(r.text)+'</div>':''}${(r.files&&r.files.length)?'<div class="rfiles">'+r.files.map((f,i)=>(String(f.type||'').startsWith('image/')?`<img src="${f.data}" alt="${esc(f.name||'')}" onclick="reqFile('${r.id}',${i})">`:`<button class="secondary sm" onclick="reqFile('${r.id}',${i})">📄 ${esc(f.name||'файл')}</button>`)).join('')+'</div>':''}<div class="actions" style="margin-top:6px">${nw?`<button class="sm" onclick="reqTake('${r.id}')">Взять в работу</button>`:`<button class="secondary sm" onclick="reqTake('${r.id}')">Открыть в заявке</button>`}<button class="secondary sm" onclick="location.href='tel:${esc(r.phone||'')}'">📞 Позвонить</button><button class="danger sm" onclick="reqDel('${r.id}')" aria-label="Удалить">×</button></div></div>`}).join('');
  el.innerHTML=h}
 function reqTake(id){const r=(window.REQ||[]).find(x=>x.id===id);if(!r)return;
  if((S.order.client&&S.order.client!==r.name)&&!confirm('Данные клиента в текущей заявке («'+S.order.client+'») будут заменены. Детали останутся. Продолжить?'))return;
@@ -1216,6 +1218,11 @@ function reqTake(id){const r=(window.REQ||[]).find(x=>x.id===id);if(!r)return;
  save();syncOrder();if(r.status==='new'&&window.SyncHook)SyncHook.reqSet(id,{status:'taken',takenBy:SyncHook.who()||'',takenAt:Date.now()});
  show('order')}
 function reqDel(id){if(!confirm('Удалить заявку с сайта?'))return;if(window.SyncHook)SyncHook.reqDel(id)}
+
+function reqFile(id,i){const r=(window.REQ||[]).find(x=>x.id===id),f=r&&r.files&&r.files[i];if(!f)return;
+ if(String(f.type||'').startsWith('image/')){const d=document.createElement('div');d.className='imgv';d.innerHTML=`<img src="${f.data}" alt=""><div class="imgb"><a class="btn sm" download="${esc(f.name||'foto.jpg')}" href="${f.data}">⬇ Скачать</a><button class="secondary sm">Закрыть</button></div>`;
+  d.onclick=e=>{if(e.target.tagName!=='A')d.remove()};document.body.appendChild(d)}
+ else{const a=document.createElement('a');a.href=f.data;a.download=f.name||'file';document.body.appendChild(a);a.click();a.remove()}}
 </script>
 <script type="module">
 /* MetalCut — облачная синхронизация (Firebase Auth + Firestore). Работает поверх локального хранилища. */
