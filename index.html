@@ -1204,7 +1204,7 @@ function reqRender(){const n=reqNew(),d=$('inboxDot'),m=$('inboxN');
 function reqTime(t){if(!t)return'';const d=new Date(t);return d.toLocaleDateString('ru-RU')+' '+d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}
 function renderInbox(){
  const el=$('inbox');if(!el)return;
- let h='';
+ let h='<div class="muted" style="margin-bottom:6px">Версия приложения: 18 · вложения (фото, PDF) поддерживаются</div>';
  if(window.Notification&&Notification.permission==='default')h+='<div class="warn">Чтобы приложение показывало уведомление, когда оно свёрнуто, <button class="secondary sm" onclick="Notification.requestPermission().then(renderInbox)">включи уведомления</button>. Если приложение полностью закрыто — уведомление придёт в Telegram.</div>';
  if(!window.REQ){el.innerHTML=h+'<p class="muted">Заявки с сайта появятся здесь после входа через ☁ (Google). Если вход выполнен, а список не грузится — проверь правила Firestore (в инструкции к сайту).</p>';return}
  if(!window.REQ.length){el.innerHTML=h+'<p class="muted">Заявок с сайта пока нет.</p>';return}
