@@ -64,6 +64,7 @@ html[data-theme=dark] .bad{color:#ff8a80}html[data-theme=dark] .ok{color:#6fd39a
 html[data-theme=dark] .lbl{border-color:#8896a4}
 html.big body{zoom:1.18}html.big button{min-height:52px}html.big input,html.big select{min-height:52px}
 }
+.dot{display:inline-block;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#d93025;color:#fff;font-size:11px;line-height:18px;text-align:center;margin-left:6px;font-weight:700}
 .arow2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
 .orow{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #edf0f3;font-size:14px;line-height:1.45}
 details.adv{margin-top:6px}details.adv summary{font-size:13px;color:#445260;font-weight:600;cursor:pointer;min-height:32px}
@@ -111,12 +112,13 @@ textarea{width:100%;min-height:90px;border:1px solid #cbd3dc;border-radius:8px;p
 <body>
 <header class="top noprint">
 <div class="left"><div class="brand">Metal<span>Cut</span></div>
-<div class="menuwrap"><button id="menuBtn" class="menubtn" aria-haspopup="true">☰ <span id="menuLbl">Заявка</span> ▾</button>
+<div class="menuwrap"><button id="menuBtn" class="menubtn" aria-haspopup="true">☰ <span id="menuLbl">Заявка</span> ▾<span id="inboxDot" class="dot" hidden></span></button>
 <div id="menu" class="menu" hidden>
-<button data-v="order">📋 Заявка и детали</button><button data-v="result">✂ Раскрой</button><button data-v="quote">💰 Цена клиенту</button><button data-v="stock">📦 Склад остатков</button><button data-v="archive">🗂 Архив заявок</button><button data-v="clients">👥 Клиенты и долги</button><button data-v="report">📊 Отчёт за месяц</button><button data-v="settings">⚙ Настройки</button>
+<button data-v="order">📋 Заявка и детали</button><button data-v="result">✂ Раскрой</button><button data-v="quote">💰 Цена клиенту</button><button data-v="stock">📦 Склад остатков</button><button data-v="archive">🗂 Архив заявок</button><button data-v="inbox">📥 Заявки с сайта <b id="inboxN" style="color:#d93025"></b></button><button data-v="clients">👥 Клиенты и долги</button><button data-v="report">📊 Отчёт за месяц</button><button data-v="settings">⚙ Настройки</button>
 </div></div></div>
 <button id="syncBtn" class="menubtn" style="min-height:40px;padding:6px 10px;font-size:13px" aria-label="Синхронизация">☁</button><div class="un"><span>Ед.</span><select id="unit"><option value="mm">мм</option><option value="cm">см</option><option value="m">м</option></select></div>
 </header>
+<div id="reqBar" class="toast noprint" hidden style="margin:8px"></div>
 <div id="warnBar" class="warn err noprint" hidden style="margin:8px"></div>
 <main>
 
@@ -176,6 +178,10 @@ textarea{width:100%;min-height:90px;border:1px solid #cbd3dc;border-radius:8px;p
 
 <section class="view" id="v-archive" hidden>
 <div class="panel"><h2>Архив заявок</h2><p class="muted">Заявки попадают сюда после «Работа выполнена». Можно открыть заявку снова, чтобы повторить или распечатать ценник.</p><div class="grid" style="margin:8px 0"><div><label>Поиск</label><input id="archQ" type="search" placeholder="клиент, №, деталь, дата" oninput="renderArchive()"></div><div><label>Показать</label><select id="archSt" onchange="renderArchive()"><option value="">Все</option><option value="draft">В работе</option><option value="ready">Готово (не выдано)</option><option value="issued">Выдано</option><option value="debt">С долгом</option></select></div></div><div id="archive"></div></div>
+</section>
+
+<section class="view" id="v-inbox" hidden>
+<div class="panel"><h2>Заявки с сайта</h2><div id="inbox"></div></div>
 </section>
 
 <section class="view" id="v-clients" hidden>
@@ -985,10 +991,10 @@ function edDone(){
  const p=getP(E.id);p.segs=segsFromPts(E.pts);p.face=E.face;applyProf(p);openProf.add(E.id);closeEd();changed()}
 
 /* навигация и печать */
-const VN={clients:'Клиенты',report:'Отчёт',order:'Заявка',result:'Раскрой',quote:'Цена клиенту',stock:'Склад',archive:'Архив',settings:'Настройки'};
+const VN={inbox:'Заявки с сайта',clients:'Клиенты',report:'Отчёт',order:'Заявка',result:'Раскрой',quote:'Цена клиенту',stock:'Склад',archive:'Архив',settings:'Настройки'};
 function show(v){cur=v;document.querySelectorAll('.view').forEach(e=>e.hidden=e.id!=='v-'+v);$('menuLbl').textContent=VN[v];
  document.querySelectorAll('#menu button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));$('menu').hidden=true;
- if(v==='result'&&result)render();if(v==='quote')renderQuote();if(v==='archive')renderArchive();if(v==='clients')renderClients();if(v==='settings'){altFill();uiApply()}if(v==='report')renderReport();if(typeof window.scrollTo==='function')window.scrollTo(0,0)}
+ if(v==='result'&&result)render();if(v==='quote')renderQuote();if(v==='archive')renderArchive();if(v==='clients')renderClients();if(v==='inbox')renderInbox();if(v==='settings'){altFill();uiApply()}if(v==='report')renderReport();if(typeof window.scrollTo==='function')window.scrollTo(0,0)}
 let pvKind='',pvTitle='';
 const uniqIds=html=>html.replace(/id="([^"]+)"/g,(m,i)=>/^((us|sc)\d+|hemp)$/.test(i)?`id="p_${i}"`:m).replace(/url\(#([^)]+)\)/g,(m,i)=>/^((us|sc)\d+|hemp)$/.test(i)?`url(#p_${i})`:m);
 function pvBody(kind){
@@ -1182,6 +1188,34 @@ function uiApply(){const u=uiGet();let t=u.theme;if(t==='auto')t=(typeof matchMe
  const m=document.querySelector('meta[name=theme-color]');if(m)m.content=t==='dark'?'#0b0f14':'#18212b';
  if($('uiTheme')){$('uiTheme').value=u.theme;$('uiBig').value=u.big?'1':'0'}}
 function uiSet(){const u={theme:$('uiTheme').value,big:$('uiBig').value==='1'};try{localStorage.setItem('mc_ui',JSON.stringify(u))}catch(e){}uiApply()}
+/* ===== заявки с сайта ===== */
+window.REQ=undefined;
+function reqNew(){return(window.REQ||[]).filter(r=>r.status==='new').length}
+function reqBeep(){try{const A=window.AudioContext||window.webkitAudioContext,c=new A(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type='sine';o.frequency.value=880;g.gain.setValueAtTime(.2,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.5);o.start();o.stop(c.currentTime+.5)}catch(e){}}
+function reqAlert(list){const n=list[0];try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}reqBeep();
+ const b=$('reqBar');if(b){b.hidden=false;b.innerHTML='📥 <b>Новая заявка с сайта</b>: '+esc(n.name||'')+', '+esc(n.phone||'')+(list.length>1?' и ещё '+(list.length-1):'')+'<div class="actions" style="margin-top:6px"><button class="secondary sm" onclick="reqOpen()">Открыть</button><button class="secondary sm" onclick="$(\'reqBar\').hidden=true">Скрыть</button></div>'}
+ if(document.hidden&&window.Notification&&Notification.permission==='granted'){try{new Notification('Новая заявка с сайта',{body:(n.name||'')+' '+(n.phone||'')})}catch(e){}}}
+function reqOpen(){$('reqBar').hidden=true;show('inbox')}
+function reqRender(){const n=reqNew(),d=$('inboxDot'),m=$('inboxN');
+ if(d){d.hidden=!n;d.textContent=n}if(m)m.textContent=n?'('+n+')':'';
+ if(typeof cur!=='undefined'&&cur==='inbox')renderInbox()}
+function reqTime(t){if(!t)return'';const d=new Date(t);return d.toLocaleDateString('ru-RU')+' '+d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}
+function renderInbox(){
+ const el=$('inbox');if(!el)return;
+ let h='';
+ if(window.Notification&&Notification.permission==='default')h+='<div class="warn">Чтобы приложение показывало уведомление, когда оно свёрнуто, <button class="secondary sm" onclick="Notification.requestPermission().then(renderInbox)">включи уведомления</button>. Если приложение полностью закрыто — уведомление придёт в Telegram.</div>';
+ if(!window.REQ){el.innerHTML=h+'<p class="muted">Заявки с сайта появятся здесь после входа через ☁ (Google). Если вход выполнен, а список не грузится — проверь правила Firestore (в инструкции к сайту).</p>';return}
+ if(!window.REQ.length){el.innerHTML=h+'<p class="muted">Заявок с сайта пока нет.</p>';return}
+ h+=window.REQ.map(r=>{const nw=r.status==='new',tk=r.status==='taken';
+  return `<div class="orow" style="display:block;${nw?'border-left:4px solid #f07824;padding-left:8px':''}"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>${esc(r.name||'')}</b> · <a href="tel:${esc(r.phone||'')}">${esc(r.phone||'')}</a><br><span class="muted">${reqTime(r._t)}${r.item?' · '+esc(r.item):''}${r.color?' · '+esc(r.color):''}</span></div><div>${nw?'<b class="bad">Новая</b>':tk?'<span class="ok">В работе'+(r.takenBy?' · '+esc(r.takenBy):'')+'</span>':'<span class="muted">'+esc(r.status||'')+'</span>'}</div></div>${r.text?'<div style="margin:6px 0;white-space:pre-wrap">'+esc(r.text)+'</div>':''}<div class="actions" style="margin-top:6px">${nw?`<button class="sm" onclick="reqTake('${r.id}')">Взять в работу</button>`:`<button class="secondary sm" onclick="reqTake('${r.id}')">Открыть в заявке</button>`}<button class="secondary sm" onclick="location.href='tel:${esc(r.phone||'')}'">📞 Позвонить</button><button class="danger sm" onclick="reqDel('${r.id}')" aria-label="Удалить">×</button></div></div>`}).join('');
+ el.innerHTML=h}
+function reqTake(id){const r=(window.REQ||[]).find(x=>x.id===id);if(!r)return;
+ if((S.order.client&&S.order.client!==r.name)&&!confirm('Данные клиента в текущей заявке («'+S.order.client+'») будут заменены. Детали останутся. Продолжить?'))return;
+ S.order.client=r.name||'';S.order.phone=r.phone||'';
+ S.order.note=[r.item,r.color,r.text].filter(Boolean).join(' · ').slice(0,500);
+ save();syncOrder();if(r.status==='new'&&window.SyncHook)SyncHook.reqSet(id,{status:'taken',takenBy:SyncHook.who()||'',takenAt:Date.now()});
+ show('order')}
+function reqDel(id){if(!confirm('Удалить заявку с сайта?'))return;if(window.SyncHook)SyncHook.reqDel(id)}
 </script>
 <script type="module">
 /* MetalCut — облачная синхронизация (Firebase Auth + Firestore). Работает поверх локального хранилища. */
@@ -1232,7 +1266,7 @@ async function boot(){
  }catch(e){FB=null;console.warn('sync boot',e)}
  booting=false;status()}
 
-function stop(){subs.forEach(f=>{try{f()}catch(e){}});subs=[];denied=false;Object.keys(last).forEach(k=>delete last[k]);Object.keys(srv).forEach(k=>delete srv[k]);Object.keys(pend).forEach(k=>delete pend[k])}
+function stop(){subs.forEach(f=>{try{f()}catch(e){}});subs=[];reqIds=null;window.REQ=undefined;denied=false;Object.keys(last).forEach(k=>delete last[k]);Object.keys(srv).forEach(k=>delete srv[k]);Object.keys(pend).forEach(k=>delete pend[k])}
 function start(){
  stop();const b=B();
  if(b.uid&&b.uid!==user.uid){S.base=null;S.drafts=[];S.draftId=null;S.tomb=[]}
@@ -1244,7 +1278,13 @@ function start(){
  watch('ord',FB.collection(db,'orders'),onOrd);
  watch('cfg',FB.doc(db,'meta','cfg'),onCfg);
  watch('lib',FB.doc(db,'meta','lib'),onLib);
- watch('cnt',FB.doc(db,'meta','counter'),onCnt)}
+ watch('cnt',FB.doc(db,'meta','counter'),onCnt);
+ subs.push(FB.onSnapshot(FB.collection(db,'requests'),onReq,()=>{}))}
+let reqIds=null;
+function onReq(snap){const arr=[];snap.forEach(d=>{const o=d.data();arr.push(Object.assign({id:d.id},o,{_t:o.createdAt&&o.createdAt.toMillis?o.createdAt.toMillis():(+o.createdAt||0)}))});
+ arr.sort((a,b)=>b._t-a._t);window.REQ=arr;
+ if(reqIds){const fresh=arr.filter(x=>!reqIds.has(x.id)&&x.status==='new');if(fresh.length&&typeof reqAlert==='function')reqAlert(fresh)}
+ reqIds=new Set(arr.map(x=>x.id));if(typeof reqRender==='function')reqRender()}
 
 function flush(){if(timer){clearTimeout(timer);timer=null;push()}}
 function persist(){saveRaw()}
@@ -1339,6 +1379,8 @@ window.SyncHook={
  dirty(){if(!ready())return;if(timer)clearTimeout(timer);timer=setTimeout(push,350)},
  bump(d){if(!ready())return;FB.setDoc(FB.doc(db,'meta','counter'),{n:FB.increment(d)},{merge:true})},
  who(){return who()},
+ reqSet(id,p){if(FB&&db&&user)FB.setDoc(FB.doc(db,'requests',id),p,{merge:true})},
+ reqDel(id){if(FB&&db&&user)FB.deleteDoc(FB.doc(db,'requests',id))},
  fixNeg(){if(!ready())return;(window.NEG||[]).forEach(o=>{FB.setDoc(FB.doc(db,'offcuts',o.id),{qty:FB.increment(-o.qty)},{merge:true})})},
  _state(){return{user:!!user,init:B().init,pend:Object.assign({},pend)}}};
 document.addEventListener('visibilitychange',()=>{if(document.hidden)flush()});
