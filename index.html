@@ -116,7 +116,7 @@ textarea{width:100%;min-height:90px;border:1px solid #cbd3dc;border-radius:8px;p
 <div class="left"><div class="brand">Metal<span>Cut</span></div>
 <div class="menuwrap"><button id="menuBtn" class="menubtn" aria-haspopup="true">☰ <span id="menuLbl">Заявка</span> ▾<span id="inboxDot" class="dot" hidden></span></button>
 <div id="menu" class="menu" hidden>
-<button data-v="order">📋 Заявка и детали</button><button data-v="result">✂ Раскрой</button><button data-v="quote">💰 Цена клиенту</button><button data-v="stock">📦 Склад остатков</button><button data-v="archive">🗂 Архив заявок</button><button data-v="inbox">📥 Заявки с сайта <b id="inboxN" style="color:#d93025"></b></button><button data-v="clients">👥 Клиенты и долги</button><button data-v="report">📊 Отчёт за месяц</button><button data-v="settings">⚙ Настройки</button>
+<button data-v="order">📋 Заявка и детали</button><button data-v="result">✂ Раскрой</button><button data-v="quote">💰 Цена клиенту</button><button data-v="stock">📦 Склад остатков</button><button data-v="archive">🗂 Архив заявок</button><button data-v="site">🌐 Сайт</button><button data-v="inbox">📥 Заявки с сайта <b id="inboxN" style="color:#d93025"></b></button><button data-v="clients">👥 Клиенты и долги</button><button data-v="report">📊 Отчёт за месяц</button><button data-v="settings">⚙ Настройки</button>
 </div></div></div>
 <button id="syncBtn" class="menubtn" style="min-height:40px;padding:6px 10px;font-size:13px" aria-label="Синхронизация">☁</button><div class="un"><span>Ед.</span><select id="unit"><option value="mm">мм</option><option value="cm">см</option><option value="m">м</option></select></div>
 </header>
@@ -182,6 +182,9 @@ textarea{width:100%;min-height:90px;border:1px solid #cbd3dc;border-radius:8px;p
 <div class="panel"><h2>Архив заявок</h2><p class="muted">Заявки попадают сюда после «Работа выполнена». Можно открыть заявку снова, чтобы повторить или распечатать ценник.</p><div class="grid" style="margin:8px 0"><div><label>Поиск</label><input id="archQ" type="search" placeholder="клиент, №, деталь, дата" oninput="renderArchive()"></div><div><label>Показать</label><select id="archSt" onchange="renderArchive()"><option value="">Все</option><option value="draft">В работе</option><option value="ready">Готово (не выдано)</option><option value="issued">Выдано</option><option value="debt">С долгом</option></select></div></div><div id="archive"></div></div>
 </section>
 
+<section class="view" id="v-site" hidden>
+<div class="panel"><h2>Сайт</h2><div id="siteForm"></div></div>
+</section>
 <section class="view" id="v-inbox" hidden>
 <div class="panel"><h2>Заявки с сайта</h2><div id="inbox"></div></div>
 </section>
@@ -995,10 +998,10 @@ function edDone(){
  const p=getP(E.id);p.segs=segsFromPts(E.pts);p.face=E.face;applyProf(p);openProf.add(E.id);closeEd();changed()}
 
 /* навигация и печать */
-const VN={inbox:'Заявки с сайта',clients:'Клиенты',report:'Отчёт',order:'Заявка',result:'Раскрой',quote:'Цена клиенту',stock:'Склад',archive:'Архив',settings:'Настройки'};
+const VN={site:'Сайт',inbox:'Заявки с сайта',clients:'Клиенты',report:'Отчёт',order:'Заявка',result:'Раскрой',quote:'Цена клиенту',stock:'Склад',archive:'Архив',settings:'Настройки'};
 function show(v){cur=v;document.querySelectorAll('.view').forEach(e=>e.hidden=e.id!=='v-'+v);$('menuLbl').textContent=VN[v];
  document.querySelectorAll('#menu button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));$('menu').hidden=true;
- if(v==='result'&&result)render();if(v==='quote')renderQuote();if(v==='archive')renderArchive();if(v==='clients')renderClients();if(v==='inbox')renderInbox();if(v==='settings'){altFill();uiApply()}if(v==='report')renderReport();if(typeof window.scrollTo==='function')window.scrollTo(0,0)}
+ if(v==='result'&&result)render();if(v==='quote')renderQuote();if(v==='archive')renderArchive();if(v==='clients')renderClients();if(v==='inbox')renderInbox();if(v==='site')renderSite();if(v==='settings'){altFill();uiApply()}if(v==='report')renderReport();if(typeof window.scrollTo==='function')window.scrollTo(0,0)}
 let pvKind='',pvTitle='';
 const uniqIds=html=>html.replace(/id="([^"]+)"/g,(m,i)=>/^((us|sc)\d+|hemp)$/.test(i)?`id="p_${i}"`:m).replace(/url\(#([^)]+)\)/g,(m,i)=>/^((us|sc)\d+|hemp)$/.test(i)?`url(#p_${i})`:m);
 function pvBody(kind){
@@ -1206,13 +1209,13 @@ function reqRender(){const n=reqNew(),d=$('inboxDot'),m=$('inboxN');
 function reqTime(t){if(!t)return'';const d=new Date(t);return d.toLocaleDateString('ru-RU')+' '+d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}
 function renderInbox(){
  const el=$('inbox');if(!el)return;
- let h='<div class="muted" style="margin-bottom:6px">Версия приложения: 19 · вложения (фото, PDF) поддерживаются</div>';
+ let h='<div class="muted" style="margin-bottom:6px">Версия приложения: 20 · вложения (фото, PDF) поддерживаются</div>';
  if(window.Notification&&Notification.permission==='default')h+='<div class="warn">Чтобы приложение показывало уведомление, когда оно свёрнуто, <button class="secondary sm" onclick="Notification.requestPermission().then(renderInbox)">включи уведомления</button>. Если приложение полностью закрыто — уведомление придёт в Telegram.</div>';
  if(!window.REQ){el.innerHTML=h+'<p class="muted">Заявки с сайта появятся здесь после входа через ☁ (Google). Если вход выполнен, а список не грузится — проверь правила Firestore (в инструкции к сайту).</p>';return}
  if(!window.REQ.length){el.innerHTML=h+'<p class="muted">Заявок с сайта пока нет.</p>';return}
  const ord={new:0,taken:1};
  h+=window.REQ.slice().sort((a,b)=>(ord[a.status]??2)-(ord[b.status]??2)||b._t-a._t).map(r=>{const nw=r.status==='new',tk=r.status==='taken',dn=r.status==='done';
-  return `<div class="orow" style="display:block;${nw?'border-left:4px solid #f07824;padding-left:8px':''}${dn?'opacity:.6':''}"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>${esc(r.name||'')}</b> · <a href="tel:${esc(r.phone||'')}">${esc(r.phone||'')}</a><br><span class="muted">${reqTime(r._t)}${r.item?' · '+esc(r.item):''}${r.color?' · '+esc(r.color):''}</span></div><div>${nw?'<b class="bad">Новая</b>':dn?'<span class="ok">✓ Выполнена</span>':tk?'<span class="ok">В работе'+(r.takenBy?' · '+esc(r.takenBy):'')+'</span>':'<span class="muted">'+esc(r.status||'')+'</span>'}</div></div>${r.text?'<div style="margin:6px 0;white-space:pre-wrap">'+esc(r.text)+'</div>':''}${(r.files&&r.files.length)?'<div class="rfiles">'+r.files.map((f,i)=>(String(f.type||'').startsWith('image/')?`<img src="${f.data}" alt="${esc(f.name||'')}" onclick="reqFile('${r.id}',${i})">`:`<button class="secondary sm" onclick="reqFile('${r.id}',${i})">📄 ${esc(f.name||'файл')}</button>`)).join('')+'</div>':''}<div class="actions" style="margin-top:6px">${nw?`<button class="sm" onclick="reqTake('${r.id}')">Взять в работу</button>`:dn?'':`<button class="secondary sm" onclick="reqTake('${r.id}')">Открыть в заявке</button><button class="secondary sm" onclick="reqDone('${r.id}')">✓ Выполнена</button>`}<button class="secondary sm" onclick="location.href='tel:${esc(r.phone||'')}'">📞 Позвонить</button><button class="danger sm" onclick="reqDel('${r.id}')" aria-label="Удалить">×</button></div></div>`}).join('');
+  return `<div class="orow" style="display:block;${nw?'border-left:4px solid #f07824;padding-left:8px':''}${dn?'opacity:.6':''}"><div style="display:flex;justify-content:space-between;gap:8px"><div><b>${esc(r.name||'')}</b> · <a href="tel:${esc(r.phone||'')}">${esc(r.phone||'')}</a><br><span class="muted">${reqTime(r._t)}${r.item?' · '+esc(r.item):''}${r.color?' · '+esc(r.color):''}</span></div><div>${nw?'<b class="bad">Новая</b>':dn?'<span class="ok">✓ Выполнена</span>':tk?'<span class="ok">В работе'+(r.takenBy?' · '+esc(r.takenBy):'')+'</span>':'<span class="muted">'+esc(r.status||'')+'</span>'}</div></div>${r.text?'<div style="margin:6px 0;white-space:pre-wrap">'+esc(r.text)+'</div>':''}${(r.files&&r.files.length)?'<div class="rfiles">'+r.files.map((f,i)=>(String(f.type||'').startsWith('image/')?`<img src="${f.data}" alt="${esc(f.name||'')}" onclick="reqFile('${r.id}',${i})">`:`<button class="secondary sm" onclick="reqFile('${r.id}',${i})">📄 ${esc(f.name||'файл')}</button>`)).join('')+'</div>':''}<div class="actions" style="margin-top:6px">${nw?`<button class="sm" onclick="reqTake('${r.id}')">Взять в работу</button>`:dn?'':`<button class="secondary sm" onclick="reqTake('${r.id}')">Открыть в заявке</button><button class="secondary sm" onclick="reqDone('${r.id}')">✓ Выполнена</button>`}<button class="secondary sm" onclick="location.href='tel:${esc(r.phone||'')}'">📞 Позвонить</button><button class="secondary sm" onclick="msgClient('${esc(r.phone||'')}','${esc((r.name||'').replace(/'/g,''))}')">✉ Сообщить</button><button class="danger sm" onclick="reqDel('${r.id}')" aria-label="Удалить">×</button></div></div>`}).join('');
  el.innerHTML=h}
 function reqTake(id){const r=(window.REQ||[]).find(x=>x.id===id);if(!r)return;
  if((S.order.client&&S.order.client!==r.name)&&!confirm('Данные клиента в текущей заявке («'+S.order.client+'») будут заменены. Детали останутся. Продолжить?'))return;
@@ -1227,6 +1230,59 @@ function reqFile(id,i){const r=(window.REQ||[]).find(x=>x.id===id),f=r&&r.files&
  if(String(f.type||'').startsWith('image/')){const d=document.createElement('div');d.className='imgv';d.innerHTML=`<img src="${f.data}" alt=""><div class="imgb"><a class="btn sm" download="${esc(f.name||'foto.jpg')}" href="${f.data}">⬇ Скачать</a><button class="secondary sm">Закрыть</button></div>`;
   d.onclick=e=>{if(e.target.tagName!=='A')d.remove()};document.body.appendChild(d)}
  else{const a=document.createElement('a');a.href=f.data;a.download=f.name||'file';document.body.appendChild(a);a.click();a.remove()}}
+
+/* ===== раздел «Сайт» и «Сообщить клиенту» (v20) ===== */
+const SITE_LS='mc_siteform';
+function siteRead(){try{return JSON.parse(localStorage.getItem(SITE_LS)||'{}')}catch(e){return{}}}
+function siteSave(o){try{localStorage.setItem(SITE_LS,JSON.stringify(o))}catch(e){}}
+function renderSite(){
+ const el=$('siteForm');if(!el)return;const d=siteRead();
+ el.innerHTML=`<p class="muted" style="margin:0 0 8px">Здесь можно менять тексты и цены на сайте без правки файлов. Изменения появятся на сайте при следующем открытии. Нужен вход через ☁ (тот же Google-аккаунт).</p>
+ <div class="grid"><div><label>Цена за м², ₽</label><input id="stPpm" type="number" inputmode="decimal" value="${esc(d.ppm??'')}"></div><div><label>За изготовление детали, ₽</label><input id="stMake" type="number" inputmode="decimal" value="${esc(d.make??'')}"></div></div>
+ <label style="margin-top:8px">Часы работы</label><input id="stHours" maxlength="60" value="${esc(d.hours||'')}" placeholder="Пн–Вс, 8:00–20:00">
+ <label style="margin-top:8px">Акция (полоса вверху сайта; пусто — не показывать)</label><input id="stBanner" maxlength="200" value="${esc(d.banner||'')}" placeholder="Например: до конца месяца −10% на отливы">
+ <label style="margin-top:8px">Отзывы — по одному в строке: Имя | текст (только настоящие)</label><textarea id="stRev" rows="4" placeholder="Андрей | Сделали точно и в срок">${esc(d.revText||'')}</textarea>
+ <label style="margin-top:8px">Факты — по одному в строке: число | подпись (только правдивые)</label><textarea id="stFacts" rows="3" placeholder="250+ | выполненных заказов">${esc(d.factText||'')}</textarea>
+ <div class="actions" style="margin-top:10px"><button id="stPub">🌐 Опубликовать на сайте</button><button class="secondary" id="stLoad">⬇ Загрузить с сайта</button></div><div id="stMsg" class="muted" style="margin-top:8px"></div>
+ <p class="muted" style="margin-top:10px">Пустые поля не меняют сайт. Фото работ меняются файлами в репозитории сайта (см. инструкцию).</p>`;
+ $('stPub').onclick=sitePublish;$('stLoad').onclick=siteLoad}
+function siteForm(){
+ const rev=$('stRev').value.split('\n').map(x=>x.trim()).filter(Boolean).map(x=>{const i=x.indexOf('|');return i<0?{n:'',t:x}:{n:x.slice(0,i).trim(),t:x.slice(i+1).trim()}}).filter(r=>r.t);
+ const fa=$('stFacts').value.split('\n').map(x=>x.trim()).filter(Boolean).map(x=>{const i=x.indexOf('|');return i<0?{v:x,l:''}:{v:x.slice(0,i).trim(),l:x.slice(i+1).trim()}}).filter(f=>f.v);
+ const o={banner:$('stBanner').value.trim(),reviews:rev,facts:fa};
+ const p=parseFloat($('stPpm').value),m=parseFloat($('stMake').value),h=$('stHours').value.trim();
+ if(p>0)o.ppm=p;if(m>=0&&$('stMake').value!=='')o.make=m;if(h)o.hours=h;
+ return o}
+async function sitePublish(){
+ const m=$('stMsg'),o=siteForm();
+ siteSave({ppm:$('stPpm').value,make:$('stMake').value,hours:$('stHours').value,banner:$('stBanner').value,revText:$('stRev').value,factText:$('stFacts').value});
+ if(!window.SyncHook||!SyncHook.sitePut){m.textContent='Синхронизация недоступна.';return}
+ m.textContent='Отправляю…';
+ try{const r=await SyncHook.sitePut(o);m.innerHTML=r==='pending'?'⏳ Сохранено на телефоне, уйдёт на сайт при появлении связи.':'✓ Опубликовано. На сайте изменения видны после обновления страницы.'}
+ catch(e){m.innerHTML='<span style="color:#d93025">Не удалось: '+esc(e&&e.message||e)+'. Проверьте вход через ☁ и правило <b>site</b> в Firestore (см. инструкцию).</span>'}}
+async function siteLoad(){
+ const m=$('stMsg');m.textContent='Загружаю…';
+ try{const g=await SyncHook.siteGet();if(!g){m.textContent='На сайте пока нет сохранённых настроек.';return}
+  siteSave({ppm:g.ppm??'',make:g.make??'',hours:g.hours||'',banner:g.banner||'',revText:(g.reviews||[]).map(r=>(r.n||'')+' | '+r.t).join('\n'),factText:(g.facts||[]).map(f=>f.v+' | '+(f.l||'')).join('\n')});
+  renderSite();$('stMsg').textContent='Загружено.'}
+ catch(e){m.textContent='Не удалось загрузить: '+(e&&e.message||e)}}
+
+function clientPhone(p){let d=String(p||'').replace(/\D/g,'');if(d.length===11&&d[0]==='8')d='7'+d.slice(1);else if(d.length===10)d='7'+d;return d}
+function msgClient(phone,name){
+ const d=clientPhone(phone);if(d.length<11){alert('Укажите телефон клиента (номер с кодом).');return}
+ const hi='Здравствуйте'+(name?', '+name:'')+'! Это мастерская «Жестянщик». ';
+ const T=[['Заявка принята',hi+'Ваша заявка принята в работу. Мы свяжемся с вами для уточнения деталей.'],['Заказ готов',hi+'Ваш заказ готов, можно забирать. Мы работаем ежедневно с 8:00 до 20:00.'],['Уточнить размеры',hi+'Уточните, пожалуйста, размеры и углы загибов по вашему заказу. Можно прислать фото или схему ответным сообщением.']];
+ const w=document.createElement('div');w.style.cssText='position:fixed;inset:0;z-index:250;background:rgba(0,0,0,.5);display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow:auto';
+ w.innerHTML=`<div style="background:#fff;border-radius:12px;padding:14px;max-width:440px;width:100%"><b style="font-size:17px">✉ Сообщить клиенту</b><div class="muted" style="margin:4px 0 8px">${esc(name||'')} · +${d}</div><div class="actions" id="mcT"></div><textarea id="mcX" rows="5" style="width:100%;margin-top:8px"></textarea><div class="actions" style="margin-top:8px"><a class="btn" id="mcW" target="_blank" rel="noopener">WhatsApp</a><a class="btn secondary" id="mcS">SMS</a><button class="secondary" id="mcC">Копировать</button><button class="secondary" id="mcQ">Закрыть</button></div></div>`;
+ document.body.appendChild(w);const X=w.querySelector('#mcX');
+ const upd=()=>{w.querySelector('#mcW').href='https://wa.me/'+d+'?text='+encodeURIComponent(X.value);w.querySelector('#mcS').href='sms:+'+d+'?body='+encodeURIComponent(X.value)};
+ w.querySelector('#mcT').innerHTML=T.map((t,i)=>`<button class="secondary sm" data-t="${i}">${t[0]}</button>`).join('');
+ w.querySelector('#mcT').onclick=e=>{const b=e.target.closest('[data-t]');if(b){X.value=T[+b.dataset.t][1];upd()}};
+ X.value=T[0][1];upd();X.oninput=upd;
+ w.querySelector('#mcC').onclick=()=>{try{navigator.clipboard.writeText(X.value)}catch(e){X.select();document.execCommand('copy')}};
+ w.querySelector('#mcQ').onclick=()=>w.remove();w.onclick=e=>{if(e.target===w)w.remove()}}
+(function(){const g=$('ordPhone')&&$('ordPhone').closest('.grid');if(g)g.insertAdjacentHTML('afterend','<div style="margin:8px 0"><button class="secondary sm" id="ordMsg" type="button">✉ Сообщить клиенту</button></div>');
+ const b=$('ordMsg');if(b)b.onclick=()=>msgClient($('ordPhone').value,$('ordClient').value.trim())})();
 </script>
 <script type="module">
 /* MetalCut — облачная синхронизация (Firebase Auth + Firestore). Работает поверх локального хранилища. */
@@ -1391,6 +1447,8 @@ window.SyncHook={
  bump(d){if(!ready())return;FB.setDoc(FB.doc(db,'meta','counter'),{n:FB.increment(d)},{merge:true})},
  who(){return who()},
  reqSet(id,p){if(FB&&db&&user)FB.setDoc(FB.doc(db,'requests',id),p,{merge:true})},
+ siteGet(){if(!(FB&&db&&user&&FB.getDoc))return Promise.reject(new Error('нет входа через ☁'));return FB.getDoc(FB.doc(db,'site','main')).then(s=>s.exists()?s.data():null)},
+ sitePut(o){if(!(FB&&db&&user))return Promise.reject(new Error('нет входа через ☁'));const p=FB.setDoc(FB.doc(db,'site','main'),Object.assign({},o,{updatedAt:Date.now()}));return Promise.race([p.then(()=>'ok'),new Promise(r=>setTimeout(()=>r('pending'),8000))])},
  reqDel(id){if(FB&&db&&user)FB.deleteDoc(FB.doc(db,'requests',id))},
  fixNeg(){if(!ready())return;(window.NEG||[]).forEach(o=>{FB.setDoc(FB.doc(db,'offcuts',o.id),{qty:FB.increment(-o.qty)},{merge:true})})},
  _state(){return{user:!!user,init:B().init,pend:Object.assign({},pend)}}};
