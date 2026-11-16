@@ -129,7 +129,7 @@ textarea{width:100%;min-height:90px;border:1px solid #cbd3dc;border-radius:8px;p
 <div class="panel"><h2>Заявка</h2>
 <div class="grid"><div><label>Заказчик</label><input id="ordClient" list="cliList" autocomplete="off" placeholder="Имя или компания"><datalist id="cliList"></datalist></div><div><label>№ заявки (авто)</label><input id="ordNo" disabled></div><div><label>Телефон</label><input id="ordPhone" type="tel" placeholder="+7…"></div><div><label>Адрес</label><input id="ordAddr" placeholder="Адрес объекта"></div><div><label>Предоплата, ₽</label><input id="ordPrepay" type="number" inputmode="decimal" min="0" step="any" placeholder="0"></div><div style="grid-column:1/-1"><label>Комментарий</label><input id="ordNote" placeholder="Например, срок, адрес"></div></div></div>
 <div class="panel" style="margin-top:12px"><h2>Детали</h2>
-<div style="margin-bottom:8px"><label>Название (необязательно)</label><input id="partName" placeholder="Например, отлив"></div>
+<div style="margin-bottom:8px"><label>Шаблон изделия (технологическая карта)</label><select id="partTpl"><option value="">— свой размер —</option></select></div><div style="margin-bottom:8px"><label>Название (необязательно)</label><input id="partName" placeholder="Например, отлив"></div>
 <div class="addrow"><div><label>A длина, <span class="ul"></span></label><input id="partA" type="number" inputmode="decimal" step="any"></div><div><label>B ширина, <span class="ul"></span></label><input id="partB" type="number" inputmode="decimal" step="any"></div><div><label>Кол-во</label><input id="partQty" type="number" inputmode="numeric" value="1" min="1"></div></div>
 <div class="actions" style="margin-top:0"><button id="add" style="flex-basis:100%">Добавить деталь</button><button class="secondary" id="demo">Пример</button><button class="secondary" id="clear">Очистить</button></div>
 <p class="muted">A — длина изделия, B — ширина заготовки. Если деталь гнутая, в её карточке откройте «Развёртка и профиль»: ширина B посчитается по полкам, а рисунок с торца попадёт в заявку и ценник.</p>
@@ -1209,7 +1209,7 @@ function reqRender(){const n=reqNew(),d=$('inboxDot'),m=$('inboxN');
 function reqTime(t){if(!t)return'';const d=new Date(t);return d.toLocaleDateString('ru-RU')+' '+d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}
 function renderInbox(){
  const el=$('inbox');if(!el)return;
- let h='<div class="muted" style="margin-bottom:6px">Версия приложения: 20 · вложения (фото, PDF) поддерживаются</div>';
+ let h='<div class="muted" style="margin-bottom:6px">Версия приложения: 21 · шаблоны изделий, вложения (фото, PDF)</div>';
  if(window.Notification&&Notification.permission==='default')h+='<div class="warn">Чтобы приложение показывало уведомление, когда оно свёрнуто, <button class="secondary sm" onclick="Notification.requestPermission().then(renderInbox)">включи уведомления</button>. Если приложение полностью закрыто — уведомление придёт в Telegram.</div>';
  if(!window.REQ){el.innerHTML=h+'<p class="muted">Заявки с сайта появятся здесь после входа через ☁ (Google). Если вход выполнен, а список не грузится — проверь правила Firestore (в инструкции к сайту).</p>';return}
  if(!window.REQ.length){el.innerHTML=h+'<p class="muted">Заявок с сайта пока нет.</p>';return}
@@ -1283,6 +1283,47 @@ function msgClient(phone,name){
  w.querySelector('#mcQ').onclick=()=>w.remove();w.onclick=e=>{if(e.target===w)w.remove()}}
 (function(){const g=$('ordPhone')&&$('ordPhone').closest('.grid');if(g)g.insertAdjacentHTML('afterend','<div style="margin:8px 0"><button class="secondary sm" id="ordMsg" type="button">✉ Сообщить клиенту</button></div>');
  const b=$('ordMsg');if(b)b.onclick=()=>msgClient($('ordPhone').value,$('ordClient').value.trim())})();
+
+/* ===== версия 21: шаблоны изделий ===== */
+{
+/* ===== шаблоны изделий (из технологической карты мастерской) ===== */
+const TPL=[
+ {id:'konek',n:'Планка конька',item:'Коньки',t:417,s:[[17,70],[152,35],[18,90],[40,0],[18,-90],[152,-35],[20,-70]]},
+ {id:'torc',n:'Торцевая',item:'Планки',t:250,s:[[17,45],[115,0],[85,-90],[18,-135],[15,-90]]},
+ {id:'karn',n:'Карнизная',item:'Планки',t:178,s:[[95,-5],[65,-55],[18,-100]]},
+ {id:'endv',n:'Ендова верхняя',item:'Коньки',t:312,s:[[16,-45],[80,-25],[18,-90],[80,0],[18,90],[80,25],[20,45]]},
+ {id:'endn',n:'Ендова нижняя',item:'Коньки',t:625,s:[[20,-55],[293,-34],[293,34],[20,55]],tn:'на карте 0,625 (сумма 626)'},
+ {id:'primv',n:'Примыкание верхнее',item:'Планки',t:417,s:[[20,-70],[130,-90],[250,0],[17,-30]]},
+ {id:'ugn',n:'Угол наружный',item:'Планки',t:0,s:[[18,60],[100,0],[100,-90],[15,-120]],free:[1,2],note:'длины полок — любые, укажите свои'},
+ {id:'ugv',n:'Угол внутренний',item:'Планки',t:0,s:[[18,-135],[100,-90],[100,0],[15,45]],free:[1,2],note:'длины полок — любые, укажите свои'},
+ {id:'primn',n:'Примыкание нижнее',item:'Планки',t:417,s:[[20,0],[122,-90],[250,0],[25,20]]},
+ {id:'ugns',n:'Угол наружный сложный',item:'Планки',t:0,s:[[22,-90],[75,0],[75,-90],[40,90],[18,180]],free:[0],cx:1,note:'N зависит от обшивки'},
+ {id:'ugvs',n:'Угол внутренний сложный',item:'Планки',t:0,s:[[40,-90],[75,-45],[40,0]],cx:1},
+ {id:'stks',n:'Стыковочная сложная',item:'Планки',t:0,s:[[40,0],[18,90],[75,0],[18,-90],[40,0]],cx:1},
+ {id:'zav1',n:'Планка завершающая',item:'Планки',t:0,s:[[15,105],[25,90],[22,0],[40,-90]],free:[2],note:'N (верхняя полка) зависит от обшивки'},
+ {id:'stk',n:'Планка стыковочная',item:'Планки',t:90,s:[[15,20],[60,0],[15,-20]]},
+ {id:'snez',n:'Снегозадержатель',item:'Планки',t:208,s:[[30,0],[65,90],[95,-27],[18,0]]},
+ {id:'otl',n:'Отлив',item:'Отливы',t:0,s:[[20,-90],[150,-10],[15,-90]],free:[1],note:'длина полки — любая, укажите свою'},
+ {id:'zob',n:'Зобная планка',item:'Планки',t:85,s:[[15,120],[20,90],[15,0],[20,-90],[15,-120]]},
+ {id:'torcg',n:'Торцевая ГЧ',item:'Планки',t:250,s:[[115,0],[20,50],[85,-75],[15,-105],[15,-90]]},
+ {id:'zav2',n:'Планка завершающая (блокхаус ИЖ)',item:'Планки',t:125,s:[[15,105],[30,90],[30,0],[50,-90]]},
+ {id:'st1',n:'Стартовая (экобрус GL/ИЖ, евробрус)',item:'Планки',t:115,s:[[60,-90],[20,30],[15,150],[20,30]],cx:1},
+ {id:'st2',n:'Стартовая (блокхаус GL)',item:'Планки',t:75,s:[[60,-90],[15,80]]},
+ {id:'st3',n:'Планка стартовая (кор. доска)',item:'Планки',t:75,s:[[40,-90],[20,-65],[15,65]]},
+ {id:'st4',n:'Планка стартовая Т-сайдинг',item:'Планки',t:0,s:[[40,-90],[15,0],[15,90],[15,30]]},
+ {id:'vox',n:'VOX',item:'Планки',t:0,s:[[38,-90],[12,0],[15,90]]}
+];
+function tplSegs(t){const s=t.s,n=s.length;return s.map((p,i)=>{if(i===n-1)return{l:p[0]};let d=s[i+1][1]-p[1];while(d>180)d-=360;while(d<=-180)d+=360;return{l:p[0],a:Math.abs(d),d:d>=0?1:-1}})}
+function tplDev(t){return t.s.reduce((a,p)=>a+p[0],0)}
+
+
+const sel=$('partTpl');
+sel.innerHTML='<option value="">— свой размер —</option>'+TPL.map(x=>`<option value="${x.id}">${esc(x.n)} (${tplDev(x)} мм)</option>`).join('');
+sel.onchange=()=>{const x=TPL.find(y=>y.id===sel.value);if(!x)return;
+ $('partName').value=x.n;const k=f();$('partB').value=Math.round(tplDev(x)/k*1e4)/1e4;
+ $('partA').focus()};
+const oa=$('add').onclick;$('add').onclick=()=>{oa();sel.value=''};
+}
 </script>
 <script type="module">
 /* MetalCut — облачная синхронизация (Firebase Auth + Firestore). Работает поверх локального хранилища. */
