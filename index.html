@@ -1241,21 +1241,26 @@ function renderSite(){
  <div class="grid"><div><label>Цена за м², ₽</label><input id="stPpm" type="number" inputmode="decimal" value="${esc(d.ppm??'')}"></div><div><label>За изготовление детали, ₽</label><input id="stMake" type="number" inputmode="decimal" value="${esc(d.make??'')}"></div></div>
  <label style="margin-top:8px">Часы работы</label><input id="stHours" maxlength="60" value="${esc(d.hours||'')}" placeholder="Пн–Вс, 8:00–20:00">
  <label style="margin-top:8px">Акция (полоса вверху сайта; пусто — не показывать)</label><input id="stBanner" maxlength="200" value="${esc(d.banner||'')}" placeholder="Например: до конца месяца −10% на отливы">
+ <label style="margin-top:8px">Таймер акции: до какой даты и времени (пусто — без таймера; после окончания полоса исчезнет сама)</label><input id="stUntil" type="datetime-local" value="${esc(d.until||'')}">
+ <div class="actions" style="margin-top:6px"><button class="secondary" type="button" data-ud="0">Сегодня до 23:59</button><button class="secondary" type="button" data-ud="3">+3 дня</button><button class="secondary" type="button" data-ud="7">+7 дней</button><button class="secondary" type="button" data-ud="-1">Без таймера</button></div>
  <label style="margin-top:8px">Отзывы — по одному в строке: Имя | текст (только настоящие)</label><textarea id="stRev" rows="4" placeholder="Андрей | Сделали точно и в срок">${esc(d.revText||'')}</textarea>
  <label style="margin-top:8px">Факты — по одному в строке: число | подпись (только правдивые)</label><textarea id="stFacts" rows="3" placeholder="250+ | выполненных заказов">${esc(d.factText||'')}</textarea>
  <div class="actions" style="margin-top:10px"><button id="stPub">🌐 Опубликовать на сайте</button><button class="secondary" id="stLoad">⬇ Загрузить с сайта</button></div><div id="stMsg" class="muted" style="margin-top:8px"></div>
  <p class="muted" style="margin-top:10px">Пустые поля не меняют сайт. Фото работ меняются файлами в репозитории сайта (см. инструкцию).</p>`;
+ el.querySelectorAll('[data-ud]').forEach(b=>b.onclick=()=>{const n=+b.dataset.ud,inp=$('stUntil');if(n<0){inp.value='';return}const d=new Date();d.setDate(d.getDate()+n);d.setHours(23,59,0,0);inp.value=untilLocal(d)});
  $('stPub').onclick=sitePublish;$('stLoad').onclick=siteLoad}
+function untilLocal(d){const p=n=>(n<10?'0':'')+n;return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes())}
 function siteForm(){
  const rev=$('stRev').value.split('\n').map(x=>x.trim()).filter(Boolean).map(x=>{const i=x.indexOf('|');return i<0?{n:'',t:x}:{n:x.slice(0,i).trim(),t:x.slice(i+1).trim()}}).filter(r=>r.t);
  const fa=$('stFacts').value.split('\n').map(x=>x.trim()).filter(Boolean).map(x=>{const i=x.indexOf('|');return i<0?{v:x,l:''}:{v:x.slice(0,i).trim(),l:x.slice(i+1).trim()}}).filter(f=>f.v);
- const o={banner:$('stBanner').value.trim(),reviews:rev,facts:fa};
+ const uv=$('stUntil').value,ud=uv?new Date(uv):null;
+ const o={banner:$('stBanner').value.trim(),bannerUntil:ud&&!isNaN(ud)?ud.toISOString():'',reviews:rev,facts:fa};
  const p=parseFloat($('stPpm').value),m=parseFloat($('stMake').value),h=$('stHours').value.trim();
  if(p>0)o.ppm=p;if(m>=0&&$('stMake').value!=='')o.make=m;if(h)o.hours=h;
  return o}
 async function sitePublish(){
  const m=$('stMsg'),o=siteForm();
- siteSave({ppm:$('stPpm').value,make:$('stMake').value,hours:$('stHours').value,banner:$('stBanner').value,revText:$('stRev').value,factText:$('stFacts').value});
+ siteSave({ppm:$('stPpm').value,make:$('stMake').value,hours:$('stHours').value,banner:$('stBanner').value,until:$('stUntil').value,revText:$('stRev').value,factText:$('stFacts').value});
  if(!window.SyncHook||!SyncHook.sitePut){m.textContent='Синхронизация недоступна.';return}
  m.textContent='Отправляю…';
  try{const r=await SyncHook.sitePut(o);m.innerHTML=r==='pending'?'⏳ Сохранено на телефоне, уйдёт на сайт при появлении связи.':'✓ Опубликовано. На сайте изменения видны после обновления страницы.'}
@@ -1263,7 +1268,7 @@ async function sitePublish(){
 async function siteLoad(){
  const m=$('stMsg');m.textContent='Загружаю…';
  try{const g=await SyncHook.siteGet();if(!g){m.textContent='На сайте пока нет сохранённых настроек.';return}
-  siteSave({ppm:g.ppm??'',make:g.make??'',hours:g.hours||'',banner:g.banner||'',revText:(g.reviews||[]).map(r=>(r.n||'')+' | '+r.t).join('\n'),factText:(g.facts||[]).map(f=>f.v+' | '+(f.l||'')).join('\n')});
+  siteSave({ppm:g.ppm??'',make:g.make??'',hours:g.hours||'',banner:g.banner||'',until:g.bannerUntil?untilLocal(new Date(g.bannerUntil)):'',revText:(g.reviews||[]).map(r=>(r.n||'')+' | '+r.t).join('\n'),factText:(g.facts||[]).map(f=>f.v+' | '+(f.l||'')).join('\n')});
   renderSite();$('stMsg').textContent='Загружено.'}
  catch(e){m.textContent='Не удалось загрузить: '+(e&&e.message||e)}}
 
@@ -1289,22 +1294,22 @@ function msgClient(phone,name){
 /* ===== шаблоны изделий (из технологической карты мастерской) ===== */
 const TPL=[
  {id:'konek',n:'Планка конька',item:'Коньки',t:417,s:[[17,70],[152,35],[18,90],[40,0],[18,-90],[152,-35],[20,-70]]},
- {id:'torc',n:'Торцевая',item:'Планки',t:250,s:[[17,45],[115,0],[85,-90],[18,-135],[15,-90]]},
+ {id:'torc',n:'Торцевая',item:'Планки',t:250,s:[[17,45],[115,0],[85,-90],[18,-125],[15,-90]]},
  {id:'karn',n:'Карнизная',item:'Планки',t:178,s:[[95,-5],[65,-55],[18,-100]]},
  {id:'endv',n:'Ендова верхняя',item:'Коньки',t:312,s:[[16,-45],[80,-25],[18,-90],[80,0],[18,90],[80,25],[20,45]]},
  {id:'endn',n:'Ендова нижняя',item:'Коньки',t:625,s:[[20,-55],[293,-34],[293,34],[20,55]],tn:'на карте 0,625 (сумма 626)'},
  {id:'primv',n:'Примыкание верхнее',item:'Планки',t:417,s:[[20,-70],[130,-90],[250,0],[17,-30]]},
- {id:'ugn',n:'Угол наружный',item:'Планки',t:0,s:[[18,60],[100,0],[100,-90],[15,-120]],free:[1,2],note:'длины полок — любые, укажите свои'},
- {id:'ugv',n:'Угол внутренний',item:'Планки',t:0,s:[[18,-135],[100,-90],[100,0],[15,45]],free:[1,2],note:'длины полок — любые, укажите свои'},
+ {id:'ugn',n:'Угол наружный',item:'Планки',t:0,s:[[18,40],[100,0],[100,-90],[15,-105]],free:[1,2],note:'длины полок — любые, укажите свои'},
+ {id:'ugv',n:'Угол внутренний',item:'Планки',t:0,s:[[18,-110],[100,-90],[100,0],[15,-20]],free:[1,2],note:'длины полок — любые, укажите свои'},
  {id:'primn',n:'Примыкание нижнее',item:'Планки',t:417,s:[[20,0],[122,-90],[250,0],[25,20]]},
- {id:'ugns',n:'Угол наружный сложный',item:'Планки',t:0,s:[[22,-90],[75,0],[75,-90],[40,90],[18,180]],free:[0],cx:1,note:'N зависит от обшивки'},
- {id:'ugvs',n:'Угол внутренний сложный',item:'Планки',t:0,s:[[40,-90],[75,-45],[40,0]],cx:1},
+ {id:'ugns',n:'Угол наружный сложный',item:'Планки',t:0,s:[[22,188],[75,0],[75,-90],[40,98],[18,180]],free:[0],cx:1,note:'N зависит от обшивки'},
+ {id:'ugvs',n:'Угол внутренний сложный',item:'Планки',t:0,s:[[40,-90],[75,-40],[40,0]],cx:1},
  {id:'stks',n:'Стыковочная сложная',item:'Планки',t:0,s:[[40,0],[18,90],[75,0],[18,-90],[40,0]],cx:1},
  {id:'zav1',n:'Планка завершающая',item:'Планки',t:0,s:[[15,105],[25,90],[22,0],[40,-90]],free:[2],note:'N (верхняя полка) зависит от обшивки'},
  {id:'stk',n:'Планка стыковочная',item:'Планки',t:90,s:[[15,20],[60,0],[15,-20]]},
  {id:'snez',n:'Снегозадержатель',item:'Планки',t:208,s:[[30,0],[65,90],[95,-27],[18,0]]},
  {id:'otl',n:'Отлив',item:'Отливы',t:0,s:[[20,-90],[150,-10],[15,-90]],free:[1],note:'длина полки — любая, укажите свою'},
- {id:'zob',n:'Зобная планка',item:'Планки',t:85,s:[[15,120],[20,90],[15,0],[20,-90],[15,-120]]},
+ {id:'zob',n:'Зобная планка',item:'Планки',t:85,s:[[15,105],[20,90],[15,0],[20,-90],[15,-105]]},
  {id:'torcg',n:'Торцевая ГЧ',item:'Планки',t:250,s:[[115,0],[20,50],[85,-75],[15,-105],[15,-90]]},
  {id:'zav2',n:'Планка завершающая (блокхаус ИЖ)',item:'Планки',t:125,s:[[15,105],[30,90],[30,0],[50,-90]]},
  {id:'st1',n:'Стартовая (экобрус GL/ИЖ, евробрус)',item:'Планки',t:115,s:[[60,-90],[20,30],[15,150],[20,30]],cx:1},
