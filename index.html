@@ -1442,7 +1442,8 @@ function start(){
  watch('cnt',FB.doc(db,'meta','counter'),onCnt);
  subs.push(FB.onSnapshot(FB.collection(db,'requests'),onReq,()=>{}))}
 let reqIds=null;
-function onReq(snap){const arr=[];snap.forEach(d=>{const o=d.data();arr.push(Object.assign({id:d.id},o,{_t:o.createdAt&&o.createdAt.toMillis?o.createdAt.toMillis():(+o.createdAt||0)}))});
+function reqSafeFiles(a){if(!Array.isArray(a))return[];const out=[];a.slice(0,5).forEach(f=>{const d=f&&typeof f.data==='string'?f.data:'',m=/^data:(image\/(?:jpeg|png|webp|gif)|application\/pdf);base64,[A-Za-z0-9+\/=]+$/.exec(d);if(m)out.push({name:String(f.name||'file').replace(/[^\w.\- а-яА-ЯёЁ()]/g,'_').slice(0,80),type:m[1],data:d})});return out}
+function onReq(snap){const arr=[];snap.forEach(d=>{if(!/^[A-Za-z0-9_-]{1,64}$/.test(d.id))return;const o=d.data();arr.push(Object.assign({},o,{id:d.id,files:reqSafeFiles(o.files),_t:o.createdAt&&o.createdAt.toMillis?o.createdAt.toMillis():(+o.createdAt||0)}))});
  arr.sort((a,b)=>b._t-a._t);window.REQ=arr;
  if(reqIds){const fresh=arr.filter(x=>!reqIds.has(x.id)&&x.status==='new');if(fresh.length&&typeof reqAlert==='function')reqAlert(fresh)}
  reqIds=new Set(arr.map(x=>x.id));if(typeof reqRender==='function')reqRender()}
