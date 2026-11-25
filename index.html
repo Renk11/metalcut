@@ -118,7 +118,7 @@ textarea{width:100%;min-height:90px;border:1px solid #cbd3dc;border-radius:8px;p
 <div id="menu" class="menu" hidden>
 <button data-v="order">📋 Заявка и детали</button><button data-v="result">✂ Раскрой</button><button data-v="quote">💰 Цена клиенту</button><button data-v="stock">📦 Склад остатков</button><button data-v="archive">🗂 Архив заявок</button><button data-v="site">🌐 Сайт</button><button data-v="inbox">📥 Заявки с сайта <b id="inboxN" style="color:#d93025"></b></button><button data-v="clients">👥 Клиенты и долги</button><button data-v="report">📊 Отчёт за месяц</button><button data-v="settings">⚙ Настройки</button>
 </div></div></div>
-<span class="ver" style="font-size:12px;font-weight:700;opacity:.65;white-space:nowrap">V.40</span><button id="syncBtn" class="menubtn" style="min-height:40px;padding:6px 10px;font-size:13px" aria-label="Синхронизация">☁</button><div class="un"><span>Ед.</span><select id="unit"><option value="mm">мм</option><option value="cm">см</option><option value="m">м</option></select></div>
+<span class="ver" style="font-size:12px;font-weight:700;opacity:.65;white-space:nowrap">V.41</span><button id="syncBtn" class="menubtn" style="min-height:40px;padding:6px 10px;font-size:13px" aria-label="Синхронизация">☁</button><div class="un"><span>Ед.</span><select id="unit"><option value="mm">мм</option><option value="cm">см</option><option value="m">м</option></select></div>
 </header>
 <div id="reqBar" class="toast noprint" hidden style="margin:8px"></div>
 <div id="warnBar" class="warn err noprint" hidden style="margin:8px"></div>
@@ -600,6 +600,14 @@ function nodeDesc(n){return n.piece?esc(n.piece.name):(n.kids.length||n.cut?`з�
 function cutText(n){
  const c=n.cut,d=c.dir==='h'?`горизонтальный рез на ${fl(c.off)} от верхнего края`:`вертикальный рез на ${fl(c.off)} от левого края`;
  return `Заготовка ${fl(n.w)}×${fl(n.h)}: ${d}, длина реза ${fu(c.len)} → ${n.kids.map(nodeDesc).join(' + ')}`}
+function lblFit(cx,cy,ww,hh,t,fill,fs0,bold){
+ /* подпись размера: горизонтально; если не влезает — мельче; если узкая — вертикально (повёрнута) */
+ const cw=.58,len=t.length*cw,pad=4;
+ const fh=Math.min(fs0,(ww-pad)/len,hh-2),fv=Math.min(fs0,(hh-pad)/len,ww-2);
+ if(Math.max(fh,fv)<6.5)return '';
+ const f=Math.max(fh,fv).toFixed(1),w=bold?' font-weight="700"':'';
+ if(fh>=fv)return `<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="middle" font-size="${f}"${w} fill="${fill}">${t}</text>`;
+ return `<text transform="translate(${cx} ${cy}) rotate(-90)" text-anchor="middle" dominant-baseline="middle" font-size="${f}"${w} fill="${fill}">${t}</text>`}
 function svgSheet(s,idx,avail){
  const m=26,sc=Math.min((avail-m-8)/s.L,(zoom?560:380)/s.W),vw=s.L*sc,vh=s.W*sc,X=x=>m+x*sc,Y=y=>m+y*sc,tw=vw+m+8;
  let o=`<svg viewBox="0 0 ${tw} ${vh+m+8}" style="width:${zoom?Math.round(tw)+'px':'100%'}" role="img" aria-label="Схема листа ${idx+1}"><defs><pattern id="us${idx}" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="9" height="9" fill="#fff4d6"/><line x1="0" y1="0" x2="0" y2="9" stroke="#e9b44c" stroke-width="2"/></pattern><pattern id="sc${idx}" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="9" height="9" fill="#dfe4e9"/><line x1="0" y1="0" x2="0" y2="9" stroke="#b8c0c8" stroke-width="2"/></pattern></defs>`;
@@ -607,13 +615,14 @@ function svgSheet(s,idx,avail){
  if(s.trim>0)o+=`<rect x="${X(s.trim)}" y="${Y(s.trim)}" width="${(s.L-2*s.trim)*sc}" height="${(s.W-2*s.trim)*sc}" fill="#e9eef3" stroke="#8a97a4" stroke-dasharray="4 3"/>`;
  s.leaves.forEach(l=>{const fill=l.usable?`url(#us${idx})`:`url(#sc${idx})`;o+=`<rect x="${X(l.x)}" y="${Y(l.y)}" width="${l.w*sc}" height="${l.h*sc}" fill="${fill}" stroke="#9aa6b2"><title>${l.usable?'Полезный остаток':'Отход'} ${fl(l.w)}×${fl(l.h)}</title></rect>`;
   const t=`${l.usable?'ост. ':''}${fl(l.w)}×${fl(l.h)}`;
-  if(l.w*sc>t.length*5.6+6&&l.h*sc>16)o+=`<text x="${X(l.x)+l.w*sc/2}" y="${Y(l.y)+l.h*sc/2}" text-anchor="middle" dominant-baseline="middle" font-size="10" fill="#6a5a2c">${t}</text>`});
+  o+=lblFit(X(l.x)+l.w*sc/2,Y(l.y)+l.h*sc/2,l.w*sc,l.h*sc,t,'#6a5a2c',10)});
  s.pieces.forEach(n=>{const p=n.piece,ww=p.w*sc,hh=p.h*sc;
   o+=`<rect x="${X(n.x)}" y="${Y(n.y)}" width="${ww}" height="${hh}" fill="hsl(${hue(p.name)} 55% 78%)" stroke="#38566a"><title>${esc(p.name)} ${fl(p.w)}×${fl(p.h)}${p.r?' (повёрнута)':''}</title></rect>`;
   const d=`${fl(p.w)}×${fl(p.h)}${p.r?' ↻':''}`,cx=X(n.x)+ww/2,cy=Y(n.y)+hh/2;
   if(ww>d.length*5.8+6&&hh>15){const showName=hh>32&&ww>p.name.length*6+6;
    if(showName)o+=`<text x="${cx}" y="${cy-7}" text-anchor="middle" font-size="11" font-weight="700" fill="#18212b">${esc(p.name)}</text><text x="${cx}" y="${cy+8}" text-anchor="middle" font-size="10.5" fill="#18212b">${d}</text>`;
-   else o+=`<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="middle" font-size="10.5" fill="#18212b">${d}</text>`}});
+   else o+=`<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="middle" font-size="10.5" fill="#18212b">${d}</text>`}
+  else o+=lblFit(cx,cy,ww,hh,d,'#18212b',10.5,true)});
  s.cutNodes.forEach(n=>{const k=n.cut.k;let x1,y1,x2,y2,bx,by;
   if(n.cut.dir==='h'){const y=n.y+n.cut.off+k/2;x1=X(n.x);x2=X(n.x+n.w);y1=y2=Y(y);bx=x1+11;by=y1}
   else{const x=n.x+n.cut.off+k/2;y1=Y(n.y);y2=Y(n.y+n.h);x1=x2=X(x);bx=x1;by=y1+11}
