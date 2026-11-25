@@ -118,7 +118,7 @@ textarea{width:100%;min-height:90px;border:1px solid #cbd3dc;border-radius:8px;p
 <div id="menu" class="menu" hidden>
 <button data-v="order">📋 Заявка и детали</button><button data-v="result">✂ Раскрой</button><button data-v="quote">💰 Цена клиенту</button><button data-v="stock">📦 Склад остатков</button><button data-v="archive">🗂 Архив заявок</button><button data-v="site">🌐 Сайт</button><button data-v="inbox">📥 Заявки с сайта <b id="inboxN" style="color:#d93025"></b></button><button data-v="clients">👥 Клиенты и долги</button><button data-v="report">📊 Отчёт за месяц</button><button data-v="settings">⚙ Настройки</button>
 </div></div></div>
-<span class="ver" style="font-size:12px;font-weight:700;opacity:.65;white-space:nowrap">V.41</span><button id="syncBtn" class="menubtn" style="min-height:40px;padding:6px 10px;font-size:13px" aria-label="Синхронизация">☁</button><div class="un"><span>Ед.</span><select id="unit"><option value="mm">мм</option><option value="cm">см</option><option value="m">м</option></select></div>
+<span class="ver" style="font-size:12px;font-weight:700;opacity:.65;white-space:nowrap">V.42</span><button id="syncBtn" class="menubtn" style="min-height:40px;padding:6px 10px;font-size:13px" aria-label="Синхронизация">☁</button><div class="un"><span>Ед.</span><select id="unit"><option value="mm">мм</option><option value="cm">см</option><option value="m">м</option></select></div>
 </header>
 <div id="reqBar" class="toast noprint" hidden style="margin:8px"></div>
 <div id="warnBar" class="warn err noprint" hidden style="margin:8px"></div>
@@ -613,12 +613,12 @@ function svgSheet(s,idx,avail){
  let o=`<svg viewBox="0 0 ${tw} ${vh+m+8}" style="width:${zoom?Math.round(tw)+'px':'100%'}" role="img" aria-label="Схема листа ${idx+1}"><defs><pattern id="us${idx}" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="9" height="9" fill="#fff4d6"/><line x1="0" y1="0" x2="0" y2="9" stroke="#e9b44c" stroke-width="2"/></pattern><pattern id="sc${idx}" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="9" height="9" fill="#dfe4e9"/><line x1="0" y1="0" x2="0" y2="9" stroke="#b8c0c8" stroke-width="2"/></pattern></defs>`;
  o+=`<rect x="${m}" y="${m}" width="${vw}" height="${vh}" fill="url(#sc${idx})" stroke="#4b5b6b" stroke-width="1.5"/>`;
  if(s.trim>0)o+=`<rect x="${X(s.trim)}" y="${Y(s.trim)}" width="${(s.L-2*s.trim)*sc}" height="${(s.W-2*s.trim)*sc}" fill="#e9eef3" stroke="#8a97a4" stroke-dasharray="4 3"/>`;
- s.leaves.forEach(l=>{const fill=l.usable?`url(#us${idx})`:`url(#sc${idx})`;o+=`<rect x="${X(l.x)}" y="${Y(l.y)}" width="${l.w*sc}" height="${l.h*sc}" fill="${fill}" stroke="#9aa6b2"><title>${l.usable?'Полезный остаток':'Отход'} ${fl(l.w)}×${fl(l.h)}</title></rect>`;
-  const t=`${l.usable?'ост. ':''}${fl(l.w)}×${fl(l.h)}`;
+ s.leaves.forEach(l=>{const fill=l.usable?`url(#us${idx})`:`url(#sc${idx})`;o+=`<rect x="${X(l.x)}" y="${Y(l.y)}" width="${l.w*sc}" height="${l.h*sc}" fill="${fill}" stroke="#9aa6b2"><title>${l.usable?'Полезный остаток':'Отход'} ${fl(Math.max(l.w,l.h))}×${fl(Math.min(l.w,l.h))}</title></rect>`;
+  const t=`${l.usable?'ост. ':''}${fl(Math.max(l.w,l.h))}×${fl(Math.min(l.w,l.h))}`;
   o+=lblFit(X(l.x)+l.w*sc/2,Y(l.y)+l.h*sc/2,l.w*sc,l.h*sc,t,'#6a5a2c',10)});
  s.pieces.forEach(n=>{const p=n.piece,ww=p.w*sc,hh=p.h*sc;
-  o+=`<rect x="${X(n.x)}" y="${Y(n.y)}" width="${ww}" height="${hh}" fill="hsl(${hue(p.name)} 55% 78%)" stroke="#38566a"><title>${esc(p.name)} ${fl(p.w)}×${fl(p.h)}${p.r?' (повёрнута)':''}</title></rect>`;
-  const d=`${fl(p.w)}×${fl(p.h)}${p.r?' ↻':''}`,cx=X(n.x)+ww/2,cy=Y(n.y)+hh/2;
+  o+=`<rect x="${X(n.x)}" y="${Y(n.y)}" width="${ww}" height="${hh}" fill="hsl(${hue(p.name)} 55% 78%)" stroke="#38566a"><title>${esc(p.name)} ${p.r?fl(p.h)+'×'+fl(p.w):fl(p.w)+'×'+fl(p.h)}${p.r?' (повёрнута)':''}</title></rect>`;
+  const d=`${p.r?fl(p.h)+'×'+fl(p.w):fl(p.w)+'×'+fl(p.h)}${p.r?' ↻':''}`,cx=X(n.x)+ww/2,cy=Y(n.y)+hh/2;
   if(ww>d.length*5.8+6&&hh>15){const showName=hh>32&&ww>p.name.length*6+6;
    if(showName)o+=`<text x="${cx}" y="${cy-7}" text-anchor="middle" font-size="11" font-weight="700" fill="#18212b">${esc(p.name)}</text><text x="${cx}" y="${cy+8}" text-anchor="middle" font-size="10.5" fill="#18212b">${d}</text>`;
    else o+=`<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="middle" font-size="10.5" fill="#18212b">${d}</text>`}
